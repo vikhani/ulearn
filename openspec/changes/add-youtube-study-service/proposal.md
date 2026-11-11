@@ -24,6 +24,7 @@ YouTube is a huge source of learning content, but it offers no way to structure 
 - `study-plans`: Goals and study plans attached to courses (target date, pace, weekly commitment) with plan-vs-actual tracking.
 - `course-compilations`: Grouping multiple courses into ordered compilations (curated playlist bundles).
 - `sharing`: Public, revocable share links for courses and compilations with visibility controls.
+- `build-and-delivery`: Single-repository layout, scripted and Docker-based build/setup, and free GitHub Actions CI and pull-request checks.
 
 ### Modified Capabilities
 
@@ -36,4 +37,6 @@ YouTube is a huge source of learning content, but it offers no way to structure 
 - **Frontend**: React + TypeScript single-page app consuming the REST API and embedding the YouTube IFrame Player for playback.
 - **External dependencies**: YouTube Data API v3 (quota-limited) and the YouTube IFrame Player API.
 - **Key constraint**: YouTube Data API v3 exposes no watch history or per-video position, so automatic progress is tracked in ulearn's embedded player; watching on YouTube directly is not detected (ADR-0001).
+- **Repository**: one monorepo holding backend, frontend, Docker definitions, setup/build scripts, and docs.
+- **CI/CD**: GitHub Actions (free tier) running build, tests, lint, and OpenSpec validation on pull requests.
 - **Security**: API keys and the bootstrap user's credentials must be stored as secrets; share links must be unguessable and revocable.

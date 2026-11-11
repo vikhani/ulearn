@@ -90,6 +90,13 @@ A React + TypeScript single-page app built with Vite, using TanStack Query for s
 - **Why**: clean separation from the Java API; strong typing; the player integration is a small, well-supported JS surface.
 - **Alternatives**: Next.js (rejected: server rendering adds no value for an authenticated SPA backed by a separate API); server-rendered templates (rejected: poorer fit for an interactive player).
 
+### One repository, scripted Docker build, free GitHub Actions CI
+
+All components live in a single repository with documented setup/build scripts and Docker definitions (Dockerfiles + Compose) for a reproducible local stack. CI and pull-request checks run on GitHub Actions' free tier: build, tests, lint, and `openspec validate`, with secrets from GitHub Actions secrets.
+
+- **Why**: satisfies the single-repo, one-command, automated-checks requirement without paid CI; Compose gives every developer the same stack.
+- **Alternatives**: separate repositories per component (rejected: contradicts the single-repo requirement); Jenkins/self-hosted CI (rejected: cost and ops overhead); paid runners or GitHub features outside the free plan (rejected: must stay free).
+
 ### Data model (principal entities)
 
 - `users`, `credentials` (BCrypt hash) — for now a single bootstrap user from `.env` (ADR-0008)

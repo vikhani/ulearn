@@ -2,10 +2,10 @@
 
 ## 1. Backend scaffolding and infrastructure
 
-- [ ] 1.1 Create the Spring Boot project (Java 21, Maven/Gradle) with capability packages `accounts`, `catalog`, `progress`, `plans`, `compilations`, `sharing`; verify it builds with `./mvnw -q package` (or Gradle equivalent) and starts locally.
-- [ ] 1.2 Add PostgreSQL, Spring Data JPA, Flyway, validation, and security dependencies; verify a baseline `V1__init.sql` Flyway migration applies against a local database and the app boots without schema errors.
+- [x] 1.1 Create the Spring Boot project (Java 21, Maven/Gradle) with capability packages `accounts`, `catalog`, `progress`, `plans`, `compilations`, `sharing`; verify it builds with `./mvnw -q package` (or Gradle equivalent) and starts locally.
+- [x] 1.2 Add PostgreSQL, Spring Data JPA, Flyway, validation, and security dependencies; verify a baseline `V1__init.sql` Flyway migration applies against a local database and the app boots without schema errors.
 - [ ] 1.3 Configure the YouTube Data API key and the bootstrap user credentials via environment/secret config; verify the app reads them from config and fails fast with a clear message when either is absent.
-- [ ] 1.4 Add a health endpoint and a consistent JSON error response shape; verify `/health` returns OK and a forced validation error returns the standard error body in a test.
+- [x] 1.4 Add a health endpoint and a consistent JSON error response shape; verify `/health` returns OK and a forced validation error returns the standard error body in a test.
 
 ## 2. Authentication (staged: Basic auth)
 
@@ -66,7 +66,7 @@ _(Full multi-user accounts — registration, login, sessions, profile — is def
 
 ## 8. Frontend foundation and authentication
 
-- [ ] 8.1 Scaffold the React + TypeScript SPA with Vite, routing, TanStack Query, and an API client; verify `npm run build` succeeds and the app renders a shell route.
+- [x] 8.1 Scaffold the React + TypeScript SPA with Vite, routing, TanStack Query, and an API client; verify `npm run build` succeeds and the app renders a shell route.
 - [ ] 8.2 Implement Basic-auth login/logout against the bootstrap user and an auth guard; verify a test covers successful login, invalid credentials, and logout clearing the session.
 - [ ] 8.3 Add authenticated routing/guards and a standard API error surface; verify a test shows unauthenticated users are redirected and API errors are displayed.
 
@@ -89,6 +89,16 @@ _(Full multi-user accounts — registration, login, sessions, profile — is def
 - [ ] 11.2 Run a frontend end-to-end test covering login → add course → play a lesson → see progress → share; verify it passes against a running backend.
 - [ ] 11.3 Verify cross-cutting security: unauthorized access is denied, share tokens are not logged or leaked, and no secret appears in logs; verify by inspecting responses/logs and a negative-access test.
 - [ ] 11.4 Confirm all `specs/*/spec.md` scenarios are covered by at least one test and record the mapping in `docs/testing.md`.
+
+## 12. Repository, build automation, and CI
+
+- [x] 12.1 Ensure all components live in one repository with a documented layout; verify a fresh clone contains backend, frontend, Docker definitions, scripts, and docs with no external repository dependency.
+- [x] 12.2 Add idempotent setup and build scripts covering all components; verify running each script twice completes successfully and a clean machine can be set up and built with one command each.
+- [x] 12.3 Add Dockerfiles and a Compose file for backend, frontend, and database with config via environment variables; verify `docker compose up` starts the full stack and no secret is baked into an image.
+- [ ] 12.4 Add a GitHub Actions CI workflow (free tier) that builds and tests on pull requests and pushes; verify a PR shows the workflow status and a failing test fails the run.
+- [ ] 12.5 Add required pull-request checks (build, tests, lint, and `openspec validate`) and mark them required in branch protection; verify a PR with a failing check cannot merge.
+- [ ] 12.6 Store CI secrets in GitHub Actions secrets and confirm no credentials are committed; verify a secret-dependent job reads from secrets and a repo scan finds no secrets.
+- [x] 12.7 Document the repository layout, scripts, Docker usage, and CI in `docs/development.md` and verify the documented commands run as written.
 
 ## Workflow follow-up
 
