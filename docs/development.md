@@ -61,7 +61,7 @@ All configuration comes from environment variables; no secrets are baked into im
 
 | Job | Runs |
 | --- | --- |
-| `backend` | `./gradlew -B build` (Temurin 21, Gradle cache) |
+| `backend` | `./gradlew --no-daemon build` (Temurin 21, Gradle cache) |
 | `frontend` | `npm ci`, `npm run lint`, `npm test`, `npm run build` |
 | `openspec` | installs `@fission-ai/openspec@1.17.0`, `openspec validate --strict` |
 | `docker` | `docker compose build` |

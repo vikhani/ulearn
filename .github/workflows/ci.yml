@@ -21,7 +21,7 @@ jobs:
           cache: gradle
       - name: Test backend
         working-directory: backend
-        run: ./gradlew -B build
+        run: ./gradlew --no-daemon build
 
   frontend:
     runs-on: ubuntu-latest
