@@ -1,9 +1,10 @@
 FROM eclipse-temurin:21-jdk AS build
 WORKDIR /workspace
-COPY .mvn/ .mvn/
-COPY mvnw pom.xml ./
+COPY gradlew settings.gradle.kts build.gradle.kts ./
+COPY gradle ./gradle
+RUN chmod +x gradlew
 COPY src ./src
-RUN ./mvnw -q -B -DskipTests package
+RUN ./gradlew --no-daemon -x test bootJar
 
 FROM eclipse-temurin:21-jre AS runtime
 WORKDIR /app
@@ -11,7 +12,7 @@ RUN apt-get update \
     && apt-get install -y --no-install-recommends curl \
     && rm -rf /var/lib/apt/lists/*
 RUN useradd --system --uid 1001 appuser
-COPY --from=build /workspace/target/*.jar app.jar
+COPY --from=build /workspace/build/libs/*.jar app.jar
 USER appuser
 EXPOSE 8080
 HEALTHCHECK --interval=30s --timeout=5s --start-period=40s --retries=5 \

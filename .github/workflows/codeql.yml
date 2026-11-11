@@ -27,5 +27,5 @@ jobs:
       - name: Build backend
         if: matrix.language == 'java-kotlin'
         working-directory: backend
-        run: ./mvnw -B -DskipTests package
+        run: ./gradlew -B -x test bootJar
       - uses: github/codeql-action/analyze@v3

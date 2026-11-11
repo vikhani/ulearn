@@ -11,7 +11,7 @@ How to build, run, and test ulearn locally, and how CI is wired.
 ## Repository layout
 
 ```
-backend/    Spring Boot API (Maven, Java 21)
+backend/    Spring Boot API (Gradle, Java 21)
 frontend/   React + TypeScript SPA (Vite)
 scripts/    setup, build, test, lint, run, clean
 docs/       this guide, ADRs, agent docs
@@ -61,7 +61,7 @@ All configuration comes from environment variables; no secrets are baked into im
 
 | Job | Runs |
 | --- | --- |
-| `backend` | `./mvnw -B verify` (Temurin 21, Maven cache) |
+| `backend` | `./gradlew -B build` (Temurin 21, Gradle cache) |
 | `frontend` | `npm ci`, `npm run lint`, `npm test`, `npm run build` |
 | `openspec` | installs `@fission-ai/openspec@1.17.0`, `openspec validate --strict` |
 | `docker` | `docker compose build` |
@@ -69,7 +69,7 @@ All configuration comes from environment variables; no secrets are baked into im
 Additional free automations:
 
 - `.github/workflows/codeql.yml` — CodeQL analysis (Java + TypeScript)
-- `.github/dependabot.yml` — weekly Maven, npm, and Actions updates
+- `.github/dependabot.yml` — weekly Gradle, npm, and Actions updates
 
 ### Required checks and secrets
 

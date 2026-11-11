@@ -35,7 +35,7 @@ A key external constraint shapes the progress design: the YouTube **Data API v3 
 
 ### Backend: Spring Boot modular monolith
 
-Java 21 + Spring Boot 3, exposing a REST/JSON API. Package by capability (`accounts`, `catalog`, `progress`, `plans`, `compilations`, `sharing`) rather than by layer, so each capability owns its controller/service/repository.
+Java 21 + Spring Boot 4 (built with Gradle), exposing a REST/JSON API. Package by capability (`accounts`, `catalog`, `progress`, `plans`, `compilations`, `sharing`) rather than by layer, so each capability owns its controller/service/repository.
 
 - **Why**: matches the user's stack choice; a single deployable keeps the MVP operationally simple while the capability packages preserve clear boundaries.
 - **Alternatives**: microservices per capability (rejected: operational overhead with no MVP benefit); reactive WebFlux (rejected: blocking JDBC/JPA is simpler and sufficient for this load profile).

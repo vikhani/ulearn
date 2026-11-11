@@ -4,7 +4,7 @@ root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$root"
 
 echo "Testing backend..."
-(cd backend && ./mvnw -B test)
+(cd backend && ./gradlew --no-daemon test)
 
 echo "Testing frontend..."
 (cd frontend && npm test)

@@ -16,7 +16,7 @@ if [ ! -f .env ]; then
 fi
 
 echo "Installing backend dependencies..."
-(cd backend && ./mvnw -q -B -DskipTests dependency:resolve)
+(cd backend && ./gradlew --no-daemon dependencies)
 
 echo "Installing frontend dependencies..."
 (cd frontend && npm ci)

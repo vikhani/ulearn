@@ -4,7 +4,7 @@ root="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$root"
 
 echo "Cleaning backend..."
-(cd backend && ./mvnw -q -B clean)
+(cd backend && ./gradlew --no-daemon clean)
 
 echo "Cleaning frontend..."
 rm -rf frontend/dist frontend/node_modules

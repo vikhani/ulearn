@@ -36,7 +36,7 @@ make clean    # remove build output, deps, and containers
 ## Repository layout
 
 ```
-backend/    Spring Boot API (Maven)
+backend/    Spring Boot API (Gradle)
 frontend/   React + TypeScript SPA (Vite)
 scripts/    setup/build/test/lint/run/clean
 docs/       development guide, ADRs, agent docs
