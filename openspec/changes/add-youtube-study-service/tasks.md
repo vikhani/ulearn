@@ -4,7 +4,7 @@
 
 - [x] 1.1 Create the Spring Boot project (Java 21, Gradle) with capability packages `accounts`, `catalog`, `progress`, `plans`, `compilations`, `sharing`; verify it builds with `./gradlew build` and starts locally.
 - [x] 1.2 Add PostgreSQL, Spring Data JPA, Flyway, validation, and security dependencies; verify a baseline `V1__init.sql` Flyway migration applies against a local database and the app boots without schema errors.
-- [ ] 1.3 Configure the YouTube Data API key and the bootstrap user credentials via environment/secret config; verify the app reads them from config and fails fast with a clear message when either is absent.
+- [x] 1.3 Configure the YouTube Data API key and the bootstrap user credentials via environment/secret config; verify the app reads them from config and fails fast with a clear message when either is absent.
 - [x] 1.4 Add a health endpoint and a consistent JSON error response shape; verify `/health` returns OK and a forced validation error returns the standard error body in a test.
 
 ## 2. Authentication (staged: Basic auth)
