@@ -2,6 +2,16 @@
 
 The end-to-end loop we follow for every change in this repo. Build/run/CI details live in `docs/development.md`.
 
+## Stay in scope
+
+While planning or implementing, you will notice problems that are **not** part of the change in hand. If the problem does not block the current change, do **not** fix it on the go:
+
+- File a GitHub issue for it and keep the current branch focused (see `docs/agents/issue-tracker.md` for the `gh` commands).
+- Link related issues/PRs (`Part of #<n>`, `Blocked by: #<n>`) and use glossary vocabulary in the title.
+- Record deferred follow-ups in the change's `tasks.md` "Workflow follow-up" section so nothing is lost.
+
+Only expand the current branch for work the change actually requires. Everything else waits in the issue tracker; fixing it here creates extra PRs and hides work that deserves its own review.
+
 ## 1. Plan with OpenSpec
 
 - Every feature or bugfix starts as an OpenSpec change: `openspec/changes/<change-id>/` with `proposal.md`, `specs/`, `design.md` (when warranted), and `tasks.md`.
