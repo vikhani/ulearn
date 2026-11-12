@@ -9,10 +9,10 @@
 
 ## 2. Authentication (staged: Basic auth)
 
-- [ ] 2.1 Implement the single bootstrap user from `.env` (username + password) with HTTP Basic security; verify a request with correct credentials is authenticated and one with wrong credentials is rejected with 401.
-- [ ] 2.2 Add the security filter chain deriving ownership from the authenticated principal; verify tests confirm the authenticated owner is allowed and access to a resource owned by another identity is denied.
-- [ ] 2.3 Ensure secrets (bootstrap password) come from environment config and are never logged or committed; verify the app fails fast when credentials are absent and no secret appears in logs.
-- [ ] 2.4 Document the interim auth model and the planned multi-user swap in `docs/api/accounts.md`; verify the documented behavior matches the running endpoints.
+- [x] 2.1 Implement the single bootstrap user from `.env` (username + password) with HTTP Basic security; verify a request with correct credentials is authenticated and one with wrong credentials is rejected with 401.
+- [x] 2.2 Add the security filter chain deriving ownership from the authenticated principal; verify tests confirm the authenticated owner is allowed and access to a resource owned by another identity is denied.
+- [x] 2.3 Ensure secrets (bootstrap password) come from environment config and are never logged or committed; verify the app fails fast when credentials are absent and no secret appears in logs.
+- [x] 2.4 Document the interim auth model and the planned multi-user swap in `docs/api/accounts.md`; verify the documented behavior matches the running endpoints.
 
 _(Full multi-user accounts — registration, login, sessions, profile — is deferred to a follow-up change; the `user-accounts` spec stays the target. See ADR-0008.)_
 
