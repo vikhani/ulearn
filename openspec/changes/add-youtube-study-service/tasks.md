@@ -20,16 +20,16 @@ _(Full multi-user accounts — registration, login, sessions, profile — is def
 
 ## 3. Playlist snapshot, catalog, and YouTube integration
 
-- [ ] 3.1 Implement `playlists` and `playlist_lessons` persistence (global snapshot with `last_synced_at`) plus per-user `courses` referencing a playlist; verify a repository test persists two courses referencing one shared playlist.
-- [ ] 3.2 Implement a YouTube Data API client that resolves a playlist URL to metadata and paginated video items using the server-side key; verify a mocked client test covers normal resolution, not-found/private, and quota/outage errors.
-- [ ] 3.3 Implement "add playlist as course" including URL validation, non-playlist rejection, per-user duplicate detection, and reuse of an existing global snapshot (refreshing it if stale); verify tests cover accepted, non-playlist, duplicate, and cache-reuse scenarios from `specs/course-catalog/spec.md`.
-- [ ] 3.4 Implement ordered lesson snapshotting (position, title, video id, duration) including the empty-playlist case; verify tests assert lesson order and the empty-playlist state.
-- [ ] 3.5 Implement owner re-sync that adds new videos, marks removed videos unavailable (retaining metadata and a YouTube link), and preserves existing progress; verify tests cover new-video and removed-video re-sync scenarios.
-- [ ] 3.6 Implement list/view/rename/delete for owned courses, with delete as soft-delete (hidden from the owner and from shares); verify tests cover owner-only listing, soft-delete hiding, and that a course in a compilation is unaffected for other members.
-- [ ] 3.7 Implement batching to conserve quota; verify a test shows a repeated resolution is served from the stored snapshot without a second API call.
+- [x] 3.1 Implement `playlists` and `playlist_lessons` persistence (global snapshot with `last_synced_at`) plus per-user `courses` referencing a playlist; verify a repository test persists two courses referencing one shared playlist.
+- [x] 3.2 Implement a YouTube Data API client that resolves a playlist URL to metadata and paginated video items using the server-side key; verify a mocked client test covers normal resolution, not-found/private, and quota/outage errors.
+- [x] 3.3 Implement "add playlist as course" including URL validation, non-playlist rejection, per-user duplicate detection, and reuse of an existing global snapshot (refreshing it if stale); verify tests cover accepted, non-playlist, duplicate, and cache-reuse scenarios from `specs/course-catalog/spec.md`.
+- [x] 3.4 Implement ordered lesson snapshotting (position, title, video id, duration) including the empty-playlist case; verify tests assert lesson order and the empty-playlist state.
+- [x] 3.5 Implement owner re-sync that adds new videos, marks removed videos unavailable (retaining metadata and a YouTube link), and preserves existing progress; verify tests cover new-video and removed-video re-sync scenarios.
+- [x] 3.6 Implement list/view/rename/delete for owned courses, with delete as soft-delete (hidden from the owner and from shares); verify tests cover owner-only listing, soft-delete hiding, and that a course in a compilation is unaffected for other members.
+- [x] 3.7 Implement batching to conserve quota; verify a test shows a repeated resolution is served from the stored snapshot without a second API call.
 - [ ] 3.8 Implement the weekly refresh job that refreshes snapshots older than the freshness threshold and recomputes affected course progress; verify tests cover stale selection, idempotency, and progress recomputation (ADR-0009).
 - [ ] 3.9 Implement the monthly cleanup job that hard-deletes snapshots unreferenced by any course after a 90-day grace period; verify tests cover the grace period and that referenced snapshots are never deleted (ADR-0006).
-- [ ] 3.10 Document the catalog API and YouTube quota/caching/refresh behavior in `docs/api/catalog.md` and verify the documented examples against the running endpoints.
+- [x] 3.10 Document the catalog API and YouTube quota/caching/refresh behavior in `docs/api/catalog.md` and verify the documented examples against the running endpoints.
 
 ## 4. Progress tracking
 
@@ -105,5 +105,7 @@ _(Full multi-user accounts — registration, login, sessions, profile — is def
 ## Workflow follow-up
 
 - Implement the full multi-user `user-accounts` spec (registration, login, sessions, profile) in a follow-up change, replacing the interim Basic auth (ADR-0008).
+- Implement the scheduled catalog jobs (3.8 weekly refresh, 3.9 monthly cleanup) in a follow-up: 3.8's "recompute affected course progress" needs the progress capability (section 4), and 3.9's reclamation semantics depend on how soft-deleted Courses count as references (ADR-0006).
+- Complete the progress/compilation cross-checks that this change could only satisfy by construction: end-to-end progress preservation across re-sync (3.5) and the "course in a compilation is unaffected for other members" case (3.6).
 - Archive the change after review and successful end-to-end verification.
 - Verify the archived result updates the main specs under `openspec/specs/`.
