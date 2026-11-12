@@ -4,6 +4,7 @@ import com.ulearn.accounts.api.AuthenticatedUser;
 import com.ulearn.accounts.api.CurrentUserProvider;
 import com.ulearn.accounts.persistence.UserEntity;
 import com.ulearn.accounts.persistence.UserRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.authentication.AnonymousAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -11,13 +12,10 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 @Component
+@RequiredArgsConstructor
 class CurrentUserProviderImpl implements CurrentUserProvider {
 
     private final UserRepository userRepository;
-
-    CurrentUserProviderImpl(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
 
     @Override
     public AuthenticatedUser currentUser() {

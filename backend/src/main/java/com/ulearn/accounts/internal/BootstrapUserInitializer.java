@@ -5,6 +5,7 @@ import com.ulearn.accounts.persistence.CredentialRepository;
 import com.ulearn.accounts.persistence.UserEntity;
 import com.ulearn.accounts.persistence.UserRepository;
 import com.ulearn.config.BootstrapUserProperties;
+import lombok.RequiredArgsConstructor;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -17,23 +18,13 @@ import org.springframework.transaction.annotation.Transactional;
  * (ADR-0008). The password value itself is never logged or persisted in plaintext.
  */
 @Component
+@RequiredArgsConstructor
 class BootstrapUserInitializer implements ApplicationRunner {
 
     private final UserRepository userRepository;
     private final CredentialRepository credentialRepository;
     private final PasswordEncoder passwordEncoder;
     private final BootstrapUserProperties bootstrapUserProperties;
-
-    BootstrapUserInitializer(
-            UserRepository userRepository,
-            CredentialRepository credentialRepository,
-            PasswordEncoder passwordEncoder,
-            BootstrapUserProperties bootstrapUserProperties) {
-        this.userRepository = userRepository;
-        this.credentialRepository = credentialRepository;
-        this.passwordEncoder = passwordEncoder;
-        this.bootstrapUserProperties = bootstrapUserProperties;
-    }
 
     @Override
     @Transactional

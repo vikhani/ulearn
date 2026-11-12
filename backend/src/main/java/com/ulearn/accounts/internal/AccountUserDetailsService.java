@@ -4,6 +4,7 @@ import com.ulearn.accounts.persistence.CredentialEntity;
 import com.ulearn.accounts.persistence.CredentialRepository;
 import com.ulearn.accounts.persistence.UserEntity;
 import com.ulearn.accounts.persistence.UserRepository;
+import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -11,19 +12,15 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
 
 /**
- * Authenticates against the stored BCrypt credential. The unstaged multi-user change replaces this
- * with registration/login (ADR-0008).
+ * Authenticates against the stored BCrypt credential. The staged multi-user change replaces this with
+ * registration/login (ADR-0008).
  */
 @Component
-class DatabaseUserDetailsService implements UserDetailsService {
+@RequiredArgsConstructor
+class AccountUserDetailsService implements UserDetailsService {
 
     private final UserRepository userRepository;
     private final CredentialRepository credentialRepository;
-
-    DatabaseUserDetailsService(UserRepository userRepository, CredentialRepository credentialRepository) {
-        this.userRepository = userRepository;
-        this.credentialRepository = credentialRepository;
-    }
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {

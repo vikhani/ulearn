@@ -28,6 +28,9 @@ public class SecurityConfig {
     @Bean
     SecurityFilterChain securityFilterChain(
             HttpSecurity http, RestAuthenticationEntryPoint authenticationEntryPoint) throws Exception {
+        // CSRF is disabled deliberately: this is a stateless HTTP Basic API with no cookie/session
+        // state, so there is no browser session to forge. Revisit when state-changing endpoints and the
+        // multi-user session flow land (ADR-0008).
         http.csrf(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(authorize -> authorize

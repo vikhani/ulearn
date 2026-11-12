@@ -28,7 +28,7 @@ compilations, shares) can reference a real user row (`user-accounts` spec; `desi
 
 The bootstrap user is seeded from environment config on every start: the user row is created only if
 absent, and its credential hash is refreshed to match the configured password. Authentication loads
-the stored hash through `DatabaseUserDetailsService`. A `courses.owner_id`-style FK to `users` keeps
+the stored hash through `AccountUserDetailsService`. A `courses.owner_id`-style FK to `users` keeps
 per-user data tied to a real identity, so the multi-user swap does not have to migrate owner columns.
 
 ## Endpoints
@@ -69,7 +69,9 @@ authenticated principal through the accounts capability's API:
 - `com.ulearn.accounts.api.CurrentUserProvider#currentUser()` — the authenticated user's `id` and
   `username`, or an `AccessDeniedException` when there is none.
 - `com.ulearn.accounts.api.OwnershipGuard#requireOwner(UUID)` — asserts the authenticated user's id is
-  the resource owner, otherwise an `AccessDeniedException` (surfaced as `403 Forbidden`).
+  the resource owner. On mismatch it logs the real reason and throws an `AccessDeniedException` with a
+  non-disclosing message ("resource not found"), surfaced as `403 Forbidden` (so callers cannot tell a
+  missing resource from one they do not own).
 
 Capabilities store the owner's id and call `requireOwner` before serving a request, so per-user
 isolation is enforced in one place and the multi-user swap stays local to the accounts capability.

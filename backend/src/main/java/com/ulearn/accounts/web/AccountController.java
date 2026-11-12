@@ -3,6 +3,7 @@ package com.ulearn.accounts.web;
 import com.ulearn.accounts.api.AuthenticatedUser;
 import com.ulearn.accounts.api.CurrentUserProvider;
 import java.util.UUID;
+import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -13,13 +14,10 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequestMapping("/api/account")
+@RequiredArgsConstructor
 class AccountController {
 
     private final CurrentUserProvider currentUserProvider;
-
-    AccountController(CurrentUserProvider currentUserProvider) {
-        this.currentUserProvider = currentUserProvider;
-    }
 
     @GetMapping
     AccountResponse currentAccount() {
