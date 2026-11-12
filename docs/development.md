@@ -61,7 +61,7 @@ All configuration comes from environment variables; no secrets are baked into im
 
 | Job | Runs |
 | --- | --- |
-| `backend` | `./gradlew --no-daemon build` (Temurin 21, Gradle cache); fails on coverage below threshold |
+| `backend` | `./gradlew --no-daemon build` (Temurin 21, Gradle cache); fails on coverage below threshold or ArchUnit violations |
 | `frontend` | `npm ci`, `npm run lint`, `npm test` (coverage-enforced), `npm run build` |
 | `openspec` | installs `@fission-ai/openspec@1.17.0`, `openspec validate --strict` |
 | `docker` | `docker compose build` |
@@ -103,3 +103,14 @@ Unit-test coverage is enforced in CI, so a PR with untested code fails before re
 - Run locally: `cd frontend && npm test` (or `npx vitest run --coverage`).
 
 Thresholds and exclusions live in `backend/build.gradle.kts` and `frontend/vite.config.ts`.
+
+## Architecture tests
+
+`backend/src/test/java/com/ulearn/arch/ArchitectureTest.java` uses [ArchUnit](https://www.archunit.org/) to encode the modular-monolith structure from `design.md`, so the package boundaries fail the build when they erode. The rules:
+
+- **Capability isolation** — the `accounts`, `catalog`, `progress`, `plans`, `compilations`, and `sharing` capabilities may depend on each other only through `com.ulearn.<capability>.api`; reaching into another capability's internals is a violation.
+- **Direction of `common`/`config`** — `com.ulearn.common` and `com.ulearn.config` must not depend on any capability.
+- **No cycles** — top-level packages under `com.ulearn` must be free of dependency cycles.
+- **Layering** — `@RestController` classes must not depend on repositories or JPA entities; `@Configuration` lives in `..config..`, `@RestController` in `..web..`, `@Repository` in `..persistence..`.
+
+Rules whose packages do not exist yet (the capabilities, controllers, repositories) are allowed to match no classes and start enforcing as those classes land. Add capability names to `ArchitectureTest` when a new one is introduced. Run locally with `cd backend && ./gradlew --no-daemon test --tests 'com.ulearn.arch.ArchitectureTest'`.
