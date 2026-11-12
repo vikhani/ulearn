@@ -2,6 +2,7 @@ package com.ulearn.accounts.internal;
 
 import com.ulearn.accounts.api.CurrentUserProvider;
 import com.ulearn.accounts.api.OwnershipGuard;
+import java.util.UUID;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.stereotype.Component;
 
@@ -15,8 +16,8 @@ class OwnershipGuardImpl implements OwnershipGuard {
     }
 
     @Override
-    public void requireOwner(String owner) {
-        if (!currentUserProvider.currentUsername().equals(owner)) {
+    public void requireOwner(UUID ownerId) {
+        if (!currentUserProvider.currentUser().id().equals(ownerId)) {
             throw new AccessDeniedException("Authenticated user is not the owner of this resource");
         }
     }

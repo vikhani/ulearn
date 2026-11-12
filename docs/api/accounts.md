@@ -12,9 +12,24 @@ bootstrap user whose credentials come from the environment. The multi-user `user
 - Credentials are read from environment configuration at startup. The app fails fast with a clear
   message when `BOOTSTRAP_USERNAME` or `BOOTSTRAP_PASSWORD` is absent, and the password is never
   logged or committed.
-- The password is held in memory as a **BCrypt** hash; no plaintext is stored.
-- Every request except the health endpoints requires authentication. All study data is scoped to
-  this authenticated owner.
+- On startup the bootstrap account is **seeded idempotently** into the database (see Storage): the
+  `users` row is created once, and its credential is stored only as a **BCrypt** hash. No plaintext is
+  persisted.
+- Every request except the health endpoints requires authentication. All study data is scoped to this
+  authenticated owner.
+
+## Storage
+
+The `users` and `credentials` tables back identity so user-owned data (Courses, progress, plans,
+compilations, shares) can reference a real user row (`user-accounts` spec; `design.md` data model):
+
+- `users` — `id` (UUID), `username` (unique), `display_name`, `created_at`.
+- `credentials` — `user_id` (FK to `users`), `password_hash` (BCrypt), `updated_at`.
+
+The bootstrap user is seeded from environment config on every start: the user row is created only if
+absent, and its credential hash is refreshed to match the configured password. Authentication loads
+the stored hash through `DatabaseUserDetailsService`. A `courses.owner_id`-style FK to `users` keeps
+per-user data tied to a real identity, so the multi-user swap does not have to migrate owner columns.
 
 ## Endpoints
 
@@ -32,7 +47,7 @@ Authorization: Basic <base64(BOOTSTRAP_USERNAME:BOOTSTRAP_PASSWORD)>
 Response `200 OK`:
 
 ```json
-{ "username": "admin" }
+{ "id": "3f0c2b1a-9d4e-4c8b-8f2a-1b2c3d4e5f60", "username": "admin" }
 ```
 
 Response `401 Unauthorized` when credentials are missing, wrong, or malformed. The body uses the
@@ -51,14 +66,14 @@ standard problem shape (`application/problem+json`):
 Capabilities never trust a client-supplied user id. The current owner is derived from the
 authenticated principal through the accounts capability's API:
 
-- `com.ulearn.accounts.api.CurrentUserProvider#currentUsername()` — the authenticated user, or an
-  `AccessDeniedException` when there is none.
-- `com.ulearn.accounts.api.OwnershipGuard#requireOwner(String)` — asserts the authenticated user is
+- `com.ulearn.accounts.api.CurrentUserProvider#currentUser()` — the authenticated user's `id` and
+  `username`, or an `AccessDeniedException` when there is none.
+- `com.ulearn.accounts.api.OwnershipGuard#requireOwner(UUID)` — asserts the authenticated user's id is
   the resource owner, otherwise an `AccessDeniedException` (surfaced as `403 Forbidden`).
 
-Capabilities store the owner as the authenticated username and call `requireOwner` before serving a
-request, so per-user isolation is enforced in one place and the multi-user swap stays local to the
-accounts capability.
+Capabilities store the owner's id and call `requireOwner` before serving a request, so per-user
+isolation is enforced in one place and the multi-user swap stays local to the accounts capability.
+
 
 ## Configuration
 

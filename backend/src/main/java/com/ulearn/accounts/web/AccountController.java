@@ -1,6 +1,8 @@
 package com.ulearn.accounts.web;
 
+import com.ulearn.accounts.api.AuthenticatedUser;
 import com.ulearn.accounts.api.CurrentUserProvider;
+import java.util.UUID;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -21,8 +23,9 @@ class AccountController {
 
     @GetMapping
     AccountResponse currentAccount() {
-        return new AccountResponse(currentUserProvider.currentUsername());
+        AuthenticatedUser user = currentUserProvider.currentUser();
+        return new AccountResponse(user.id(), user.username());
     }
 
-    record AccountResponse(String username) {}
+    record AccountResponse(UUID id, String username) {}
 }
