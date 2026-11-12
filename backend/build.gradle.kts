@@ -1,5 +1,6 @@
 plugins {
 	java
+	jacoco
 	id("org.springframework.boot") version "4.1.2"
 	id("io.spring.dependency-management") version "1.1.7"
 }
@@ -51,4 +52,52 @@ tasks.named<Jar>("jar") {
 
 tasks.withType<Test> {
 	useJUnitPlatform()
+	finalizedBy(tasks.named("jacocoTestReport"))
+}
+
+jacoco {
+	toolVersion = "0.8.14"
+}
+
+val coverageExclusions = listOf(
+	"com/ulearn/UlearnBackendApplication.class",
+)
+
+tasks.named<JacocoReport>("jacocoTestReport") {
+	dependsOn(tasks.named("test"))
+	reports {
+		xml.required = true
+		html.required = true
+	}
+	classDirectories.setFrom(
+		files(
+			classDirectories.files.map {
+				fileTree(it) { exclude(coverageExclusions) }
+			},
+		),
+	)
+}
+
+tasks.named<JacocoCoverageVerification>("jacocoTestCoverageVerification") {
+	dependsOn(tasks.named("test"))
+	violationRules {
+		rule {
+			limit {
+				counter = "LINE"
+				value = "COVEREDRATIO"
+				minimum = "0.80".toBigDecimal()
+			}
+		}
+	}
+	classDirectories.setFrom(
+		files(
+			classDirectories.files.map {
+				fileTree(it) { exclude(coverageExclusions) }
+			},
+		),
+	)
+}
+
+tasks.named("check") {
+	dependsOn(tasks.named("jacocoTestCoverageVerification"))
 }
