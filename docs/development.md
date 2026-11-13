@@ -104,6 +104,24 @@ Unit-test coverage is enforced in CI, so a PR with untested code fails before re
 
 Thresholds and exclusions live in `backend/build.gradle.kts` and `frontend/vite.config.ts`.
 
+### Mutation testing (PIT)
+
+Coverage shows what executed, not whether the tests assert anything — an assertion-free test can reach
+100% line coverage while catching nothing (verified: such a test scores 0% under PIT). [PIT](https://pitest.org/)
+closes that gap by mutating production bytecode and checking whether the suite fails.
+
+- Run locally: `cd backend && ./gradlew --no-daemon pitest`; HTML/XML reports land in
+  `backend/build/reports/pitest/`.
+- Scope: `targetClasses = com.ulearn.*` (the capability packages); generated/Lombok code and
+  `UlearnBackendApplication` are excluded.
+- Thresholds are ratchets, not targets: `mutationThreshold = 70`, `coverageThreshold = 80` — kept below
+  the current score and raised as the suite matures.
+- `pitest` is deliberately **not** wired into `build`/`check`, so the everyday build stays fast. It is
+  enforced as a dedicated step in the `backend` CI job (`.github/workflows/ci.yml`); the full run takes
+  well under a minute locally. If runtime grows, move it to a scheduled job or PIT's incremental
+  analysis (issue #14).
+- Versions are pinned: `info.solidsoft.pitest` 1.19.0, PIT 1.22.1, `pitest-junit5-plugin` 1.2.2.
+
 ## Architecture tests
 
 `backend/src/test/java/com/ulearn/arch/ArchitectureTest.java` uses [ArchUnit](https://www.archunit.org/) to encode the modular-monolith structure from `design.md`, so the package boundaries fail the build when they erode. The rules:
