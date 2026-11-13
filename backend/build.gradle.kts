@@ -3,6 +3,7 @@ plugins {
 	jacoco
 	id("org.springframework.boot") version "4.1.2"
 	id("io.spring.dependency-management") version "1.1.7"
+	id("info.solidsoft.pitest") version "1.19.0"
 }
 
 group = "com.ulearn"
@@ -107,4 +108,26 @@ tasks.named<JacocoCoverageVerification>("jacocoTestCoverageVerification") {
 
 tasks.named("check") {
 	dependsOn(tasks.named("jacocoTestCoverageVerification"))
+}
+
+// PIT mutation testing. Runs as an explicit `pitest` task (opt-in locally, enforced in the backend
+// CI job) rather than being folded into `check`, so the everyday build stays fast. `targetClasses`
+// covers the capability packages; generated/Lombok code and the Spring Boot bootstrap are excluded.
+// Thresholds are a ratchet, set below the current score, and should be raised as the suite matures
+// (issue #14).
+pitest {
+	pitestVersion = "1.22.1"
+	junit5PluginVersion = "1.2.2"
+	// The plugin's junit-platform-launcher auto-detection mis-resolves its version under Spring's
+	// dependency-management plugin (gradle-pitest-plugin #390); testRuntimeOnly pins it explicitly.
+	addJUnitPlatformLauncher = false
+	targetClasses = setOf("com.ulearn.*")
+	targetTests = setOf("com.ulearn.*")
+	excludedClasses = setOf("com.ulearn.UlearnBackendApplication")
+	outputFormats = setOf("XML", "HTML")
+	timestampedReports = false
+	failWhenNoMutations = false
+	threads = 2
+	mutationThreshold = 70
+	coverageThreshold = 80
 }

@@ -22,12 +22,22 @@ jobs:
       - name: Test backend
         working-directory: backend
         run: ./gradlew --no-daemon build
+      - name: Mutation testing (PIT)
+        working-directory: backend
+        run: ./gradlew --no-daemon pitest
       - name: Upload backend coverage
         if: always()
         uses: actions/upload-artifact@v4
         with:
           name: backend-coverage
           path: backend/build/reports/jacoco/test/html
+          if-no-files-found: ignore
+      - name: Upload backend mutation report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-mutation-report
+          path: backend/build/reports/pitest
           if-no-files-found: ignore
 
   frontend:
