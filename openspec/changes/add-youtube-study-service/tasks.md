@@ -33,13 +33,13 @@ _(Full multi-user accounts — registration, login, sessions, profile — is def
 
 ## 4. Progress tracking
 
-- [ ] 4.1 Implement `lesson_progress` persistence keyed by `(user_id, playlist_lesson_id)` with a unique constraint and a manual-override flag; verify a migration/repository test enforces uniqueness and stores the override flag.
-- [ ] 4.2 Implement an idempotent heartbeat/upsert endpoint that records max watched seconds and derives completion from a configurable duration threshold; verify tests cover watched-to-completion, partial watch, and repeated (idempotent) heartbeats.
-- [ ] 4.3 Implement manual mark complete / clear with precedence over automatic tracking, including manual completion of unavailable lessons; verify tests cover a manual mark surviving a later update, unavailable-lesson manual completion, and clearing returning control to automatic.
-- [ ] 4.4 Implement course progress = completed ÷ all lessons (available and unavailable), recomputation on lesson-set change, and the undefined (null) case only when the playlist is empty; verify tests cover each scenario in `specs/progress-tracking/spec.md`.
-- [ ] 4.5 Implement course completion (complete only when every lesson is complete; revoked when new incomplete lessons appear); verify tests cover both scenarios.
-- [ ] 4.6 Verify progress isolation between users with a test asserting one user's progress does not alter another's.
-- [ ] 4.7 Document the progress API and the in-player tracking model in `docs/api/progress.md`, and verify the documented heartbeat payload matches the running endpoint.
+- [x] 4.1 Implement `lesson_progress` persistence keyed by `(user_id, playlist_lesson_id)` with a unique constraint and a manual-override flag; verify a migration/repository test enforces uniqueness and stores the override flag.
+- [x] 4.2 Implement an idempotent heartbeat/upsert endpoint that records max watched seconds and derives completion from a configurable duration threshold; verify tests cover watched-to-completion, partial watch, and repeated (idempotent) heartbeats.
+- [x] 4.3 Implement manual mark complete / clear with precedence over automatic tracking, including manual completion of unavailable lessons; verify tests cover a manual mark surviving a later update, unavailable-lesson manual completion, and clearing returning control to automatic.
+- [x] 4.4 Implement course progress = completed ÷ all lessons (available and unavailable), recomputation on lesson-set change, and the undefined (null) case only when the playlist is empty; verify tests cover each scenario in `specs/progress-tracking/spec.md`.
+- [x] 4.5 Implement course completion (complete only when every lesson is complete; revoked when new incomplete lessons appear); verify tests cover both scenarios.
+- [x] 4.6 Verify progress isolation between users with a test asserting one user's progress does not alter another's.
+- [x] 4.7 Document the progress API and the in-player tracking model in `docs/api/progress.md`, and verify the documented heartbeat payload matches the running endpoint.
 
 ## 5. Goals and study plans
 

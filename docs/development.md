@@ -29,6 +29,7 @@ Copy `.env.example` to `.env` (the setup script does this). Variables:
 | `YOUTUBE_API_KEY` | Server-side YouTube Data API key |
 | `BOOTSTRAP_USERNAME`, `BOOTSTRAP_PASSWORD` | Interim single-user credentials (ADR-0008) |
 | `CATALOG_FRESHNESS_THRESHOLD` | ISO-8601 duration before a Playlist snapshot is refreshed (default `PT168H`) |
+| `PROGRESS_COMPLETION_THRESHOLD` | Fraction of a Lesson's duration that marks it complete automatically (default `0.95`) |
 | `VITE_API_BASE_URL` | API base URL baked into the frontend build |
 
 Secrets live in `.env` (gitignored) and in GitHub Actions secrets for CI. Never commit them.
