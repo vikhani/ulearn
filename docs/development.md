@@ -28,6 +28,7 @@ Copy `.env.example` to `.env` (the setup script does this). Variables:
 | `DB_NAME`, `DB_USERNAME`, `DB_PASSWORD` | Postgres database and credentials |
 | `YOUTUBE_API_KEY` | Server-side YouTube Data API key |
 | `BOOTSTRAP_USERNAME`, `BOOTSTRAP_PASSWORD` | Interim single-user credentials (ADR-0008) |
+| `CATALOG_FRESHNESS_THRESHOLD` | ISO-8601 duration before a Playlist snapshot is refreshed (default `PT168H`) |
 | `VITE_API_BASE_URL` | API base URL baked into the frontend build |
 
 Secrets live in `.env` (gitignored) and in GitHub Actions secrets for CI. Never commit them.

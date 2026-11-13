@@ -68,13 +68,16 @@ authenticated principal through the accounts capability's API:
 
 - `com.ulearn.accounts.api.CurrentUserProvider#currentUser()` — the authenticated user's `id` and
   `username`, or an `AccessDeniedException` when there is none.
-- `com.ulearn.accounts.api.OwnershipGuard#requireOwner(UUID)` — asserts the authenticated user's id is
-  the resource owner. On mismatch it logs the real reason and throws an `AccessDeniedException` with a
-  non-disclosing message ("resource not found"), surfaced as `403 Forbidden` (so callers cannot tell a
-  missing resource from one they do not own).
 
-Capabilities store the owner's id and call `requireOwner` before serving a request, so per-user
-isolation is enforced in one place and the multi-user swap stays local to the accounts capability.
+Capabilities scope their own queries by that owner's id (for example `WHERE owner_id = :ownerId`), so a
+resource that does not exist and one owned by another identity are indistinguishable — both surface as
+`404 Not Found`. Per-user isolation thus lives in the data layer, and the multi-user swap stays local to
+the accounts capability.
+
+`com.ulearn.accounts.api.OwnershipGuard#requireOwner(UUID)` remains available for the case where a
+resource is already loaded and no owner-scoped query applies. On mismatch it logs the real reason and
+throws an `AccessDeniedException` with a non-disclosing message ("resource not found"), surfaced as
+`403 Forbidden`.
 
 
 ## Configuration
