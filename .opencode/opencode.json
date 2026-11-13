@@ -2,8 +2,52 @@
   "$schema": "https://opencode.ai/config.json",
   "permission": {
     "bash": {
+      "*": "ask",
+      "ls *": "allow",
+      "pwd": "allow",
+      "cat *": "allow",
+      "find *": "allow",
+      "rg *": "allow",
+      "grep *": "allow",
+      "which *": "allow",
+      "command -v *": "allow",
+      "git status*": "allow",
+      "git diff*": "allow",
+      "git log*": "allow",
+      "git show*": "allow",
+      "git branch*": "allow",
+      "git remote*": "allow",
+      "git checkout*": "allow",
+      "git add*": "allow",
+      "git commit*": "allow",
+      "git fetch*": "allow",
+      "git pull*": "allow",
       "git push*": "allow",
-      "gh *": "allow"
+      "git push*--force*": "ask",
+      "git push* -f*": "ask",
+      "git push* main*": "ask",
+      "git push* master*": "ask",
+      "gh *": "allow",
+      "gh repo delete*": "deny",
+      "gh release delete*": "deny",
+      "gh secret delete*": "deny",
+      "gh variable delete*": "deny",
+      "gh api *DELETE*": "deny",
+      "gh *--force*": "deny",
+      "./gradlew *": "allow",
+      "make *": "allow",
+      "npm *": "allow",
+      "openspec *": "allow",
+      "docker compose *": "allow",
+      "docker info*": "allow",
+      "rm *": "ask"
+    },
+    "external_directory": {
+      "*": "ask",
+      "~/.ssh/**": "deny",
+      "~/.aws/**": "deny",
+      "~/.config/gcloud/**": "deny",
+      "**/.env*": "deny"
     }
   }
 }
