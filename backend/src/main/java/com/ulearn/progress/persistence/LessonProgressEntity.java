@@ -9,12 +9,12 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import jakarta.persistence.UniqueConstraint;
 import java.time.Instant;
 import java.util.UUID;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.hibernate.annotations.UpdateTimestamp;
 
 /**
  * One user's progress on one Lesson, keyed by {@code (user_id, playlist_lesson_id)}. Automatic
@@ -25,9 +25,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-@Table(
-    name = "lesson_progress",
-    uniqueConstraints = @UniqueConstraint(columnNames = {"user_id", "playlist_lesson_id"}))
+@Table(name = "lesson_progress")
 public class LessonProgressEntity {
 
   @Id
@@ -53,6 +51,7 @@ public class LessonProgressEntity {
   @Column(name = "created_at", nullable = false)
   private Instant createdAt;
 
+  @UpdateTimestamp
   @Column(name = "updated_at", nullable = false)
   private Instant updatedAt;
 
@@ -62,9 +61,7 @@ public class LessonProgressEntity {
     this.state = ProgressState.IN_PROGRESS;
     this.maxWatchedSeconds = 0;
     this.manualOverride = false;
-    Instant now = Instant.now();
-    this.createdAt = now;
-    this.updatedAt = now;
+    this.createdAt = Instant.now();
   }
 
   /**
@@ -79,14 +76,12 @@ public class LessonProgressEntity {
               ? ProgressState.COMPLETE
               : ProgressState.IN_PROGRESS;
     }
-    this.updatedAt = Instant.now();
   }
 
   /** Sets a manual mark that takes precedence over automatic tracking until cleared. */
   public void markManually(boolean completed) {
     this.manualOverride = true;
     this.state = completed ? ProgressState.COMPLETE : ProgressState.IN_PROGRESS;
-    this.updatedAt = Instant.now();
   }
 
   /** Clears the manual mark, returning the Lesson to automatic tracking. */
@@ -96,7 +91,6 @@ public class LessonProgressEntity {
         reachesThreshold(durationSeconds, threshold)
             ? ProgressState.COMPLETE
             : ProgressState.IN_PROGRESS;
-    this.updatedAt = Instant.now();
   }
 
   public boolean isComplete() {

@@ -11,3 +11,4 @@ CREATE TABLE lesson_progress (
 );
 
 CREATE INDEX lesson_progress_user_id_idx ON lesson_progress (user_id);
+CREATE INDEX lesson_progress_playlist_lesson_id_idx ON lesson_progress (playlist_lesson_id);

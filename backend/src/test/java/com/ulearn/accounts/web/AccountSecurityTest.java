@@ -6,29 +6,20 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.ulearn.TestcontainersConfiguration;
+import com.ulearn.BaseIntegrationTest;
 import com.ulearn.accounts.api.OwnershipGuard;
 import com.ulearn.accounts.persistence.UserRepository;
 import java.util.UUID;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.context.TestConfiguration;
-import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
 import org.springframework.context.annotation.Import;
-import org.springframework.test.context.ActiveProfiles;
-import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
-@SpringBootTest
-@AutoConfigureMockMvc
-@ActiveProfiles("test")
-@Import({TestcontainersConfiguration.class, AccountSecurityTest.OwnedResourceTestConfig.class})
-class AccountSecurityTest {
-
-  @Autowired MockMvc mockMvc;
+@Import(AccountSecurityTest.OwnedResourceTestConfig.class)
+class AccountSecurityTest extends BaseIntegrationTest {
 
   @Autowired UserRepository userRepository;
 

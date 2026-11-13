@@ -84,6 +84,7 @@ Provide `YOUTUBE_API_KEY`, `BOOTSTRAP_USERNAME`, and `BOOTSTRAP_PASSWORD` as Git
 ## Testing notes
 
 - Backend integration tests use Testcontainers, so Docker must be running.
+- Extend `com.ulearn.BaseIntegrationTest` for backend integration tests rather than repeating `@SpringBootTest`/`@AutoConfigureMockMvc`/`@ActiveProfiles`/`@Import(TestcontainersConfiguration.class)`. The shared annotations keep tests on one cached application context; subclasses add `@Transactional` when they need rollback and `@MockitoBean` for collaborators. Tests that need genuinely different configuration (for example explicit properties or extra `@Import`s) may still extend the base and add those annotations, but avoid declaring a new context when the base would do.
 - Frontend tests use Vitest with Testing Library and jsdom.
 
 ## Coverage gates

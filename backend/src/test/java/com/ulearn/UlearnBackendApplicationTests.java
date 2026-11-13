@@ -1,14 +1,8 @@
 package com.ulearn;
 
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Import;
-import org.springframework.test.context.ActiveProfiles;
 
-@SpringBootTest
-@ActiveProfiles("test")
-@Import(TestcontainersConfiguration.class)
-class UlearnBackendApplicationTests {
+class UlearnBackendApplicationTests extends BaseIntegrationTest {
 
   @Test
   void contextLoads() {}

@@ -12,7 +12,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.jayway.jsonpath.JsonPath;
-import com.ulearn.TestcontainersConfiguration;
+import com.ulearn.BaseIntegrationTest;
 import com.ulearn.accounts.persistence.UserEntity;
 import com.ulearn.accounts.persistence.UserRepository;
 import com.ulearn.catalog.persistence.CourseEntity;
@@ -29,29 +29,18 @@ import java.util.UUID;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.webmvc.test.autoconfigure.AutoConfigureMockMvc;
-import org.springframework.context.annotation.Import;
 import org.springframework.http.MediaType;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
-import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.transaction.annotation.Transactional;
 
-@SpringBootTest
-@AutoConfigureMockMvc
-@ActiveProfiles("test")
-@Import(TestcontainersConfiguration.class)
 @Transactional
-class ProgressTrackingIntegrationTest {
+class ProgressTrackingIntegrationTest extends BaseIntegrationTest {
 
   private static final String PLAYLIST_ID = "PLabcdefghijklmnop";
   private static final String PLAYLIST_URL = "https://www.youtube.com/playlist?list=" + PLAYLIST_ID;
-
-  @Autowired MockMvc mockMvc;
 
   @Autowired CourseRepository courseRepository;
 

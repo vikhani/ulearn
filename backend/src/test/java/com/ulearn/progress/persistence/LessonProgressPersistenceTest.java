@@ -3,7 +3,7 @@ package com.ulearn.progress.persistence;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import com.ulearn.TestcontainersConfiguration;
+import com.ulearn.BaseIntegrationTest;
 import com.ulearn.accounts.persistence.UserRepository;
 import com.ulearn.catalog.persistence.PlaylistEntity;
 import com.ulearn.catalog.persistence.PlaylistLessonEntity;
@@ -11,17 +11,11 @@ import com.ulearn.catalog.persistence.PlaylistRepository;
 import java.util.UUID;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Import;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.transaction.annotation.Transactional;
 
-@SpringBootTest
-@ActiveProfiles("test")
-@Import(TestcontainersConfiguration.class)
 @Transactional
-class LessonProgressPersistenceTest {
+class LessonProgressPersistenceTest extends BaseIntegrationTest {
 
   @Autowired LessonProgressRepository lessonProgressRepository;
 
