@@ -42,6 +42,21 @@
       "docker info*": "allow",
       "rm *": "ask"
     },
+    "read": {
+      "*": "allow",
+      "**/.env": "deny",
+      "**/.env.*": "deny",
+      "**/.env.example": "allow",
+      "**/secrets/**": "deny",
+      "**/*.pem": "deny",
+      "**/*.key": "deny",
+      "**/*.p12": "deny",
+      "**/*.keystore": "deny",
+      "**/id_rsa*": "deny",
+      "**/id_ed25519*": "deny",
+      "**/.npmrc": "deny",
+      "**/.netrc": "deny"
+    },
     "external_directory": {
       "*": "ask",
       "~/.ssh/**": "deny",
