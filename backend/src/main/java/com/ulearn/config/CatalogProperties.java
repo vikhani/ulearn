@@ -9,18 +9,17 @@ import org.springframework.validation.annotation.Validated;
 @ConfigurationProperties(prefix = "ulearn.catalog")
 public class CatalogProperties {
 
-    /**
-     * How old a Playlist snapshot may be before it is considered stale and refreshed on add and by the
-     * refresh job (ADR-0009). Defaults to one week to match the weekly cadence.
-     */
-    @NotNull
-    private Duration freshnessThreshold = Duration.ofDays(7);
+  /**
+   * How old a Playlist snapshot may be before it is considered stale and refreshed on add and by
+   * the refresh job (ADR-0009). Defaults to one week to match the weekly cadence.
+   */
+  @NotNull private Duration freshnessThreshold = Duration.ofDays(7);
 
-    public Duration getFreshnessThreshold() {
-        return freshnessThreshold;
-    }
+  public Duration getFreshnessThreshold() {
+    return freshnessThreshold;
+  }
 
-    public void setFreshnessThreshold(Duration freshnessThreshold) {
-        this.freshnessThreshold = freshnessThreshold;
-    }
+  public void setFreshnessThreshold(Duration freshnessThreshold) {
+    this.freshnessThreshold = freshnessThreshold;
+  }
 }

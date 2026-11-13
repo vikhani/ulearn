@@ -8,10 +8,12 @@ import java.util.UUID;
  */
 public interface OwnershipGuard {
 
-    /**
-     * @param ownerId the id recorded as the resource's owner
-     * @throws org.springframework.security.access.AccessDeniedException when the authenticated user is
-     *     not the owner
-     */
-    void requireOwner(UUID ownerId);
+  /**
+   * Requires that the authenticated user owns the resource.
+   *
+   * @param ownerId the id recorded as the resource's owner
+   * @throws org.springframework.security.access.AccessDeniedException when the authenticated user
+   *     is not the owner
+   */
+  void requireOwner(UUID ownerId);
 }

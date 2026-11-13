@@ -1,0 +1,21 @@
+<?xml version="1.0"?>
+<!DOCTYPE suppressions PUBLIC
+    "-//Checkstyle//DTD SuppressionFilter Configuration 1.2//EN"
+    "https://checkstyle.org/dtds/suppressions_1_2.dtd">
+
+<!--
+  Justified exemptions from the Google checks (google_checks.xml).
+
+  The Google preset requires a Javadoc comment on every public/protected type, method, and
+  constructor. This codebase documents intent in names and tests rather than method-level Javadoc,
+  so we drop the *presence* checks. Javadoc that *is* written is still held to Google's quality
+  rules (SummaryJavadoc, JavadocParagraph, AtclauseOrder, ...). Revisit if we adopt an
+  API-documentation policy.
+
+  Suppressing presence checks is a policy choice, not a baseline ratchet: every other rule fails
+  the build on any violation.
+-->
+<suppressions>
+  <suppress files=".*" checks="MissingJavadocMethod"/>
+  <suppress files=".*" checks="MissingJavadocType"/>
+</suppressions>

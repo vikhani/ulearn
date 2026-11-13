@@ -11,50 +11,52 @@ import org.springframework.boot.validation.autoconfigure.ValidationAutoConfigura
 
 class ExternalConfigurationTest {
 
-    private final ApplicationContextRunner runner = new ApplicationContextRunner()
-            .withConfiguration(AutoConfigurations.of(
-                    ConfigurationPropertiesAutoConfiguration.class,
-                    ValidationAutoConfiguration.class))
-            .withUserConfiguration(PropertiesConfig.class);
+  private final ApplicationContextRunner runner =
+      new ApplicationContextRunner()
+          .withConfiguration(
+              AutoConfigurations.of(
+                  ConfigurationPropertiesAutoConfiguration.class,
+                  ValidationAutoConfiguration.class))
+          .withUserConfiguration(PropertiesConfig.class);
 
-    @Test
-    void readsYouTubeAndBootstrapCredentialsFromConfig() {
-        runner.withPropertyValues(
-                        "ulearn.youtube.api-key=yt-key",
-                        "ulearn.bootstrap.username=learner",
-                        "ulearn.bootstrap.password=s3cret")
-                .run(context -> {
-                    assertThat(context).hasNotFailed();
-                    assertThat(context.getBean(YouTubeProperties.class).getApiKey()).isEqualTo("yt-key");
-                    BootstrapUserProperties bootstrap = context.getBean(BootstrapUserProperties.class);
-                    assertThat(bootstrap.getUsername()).isEqualTo("learner");
-                    assertThat(bootstrap.getPassword()).isEqualTo("s3cret");
-                });
-    }
+  @Test
+  void readsYouTubeAndBootstrapCredentialsFromConfig() {
+    runner
+        .withPropertyValues(
+            "ulearn.youtube.api-key=yt-key",
+            "ulearn.bootstrap.username=learner",
+            "ulearn.bootstrap.password=s3cret")
+        .run(context -> {
+          assertThat(context).hasNotFailed();
+          assertThat(context.getBean(YouTubeProperties.class).getApiKey()).isEqualTo("yt-key");
+          BootstrapUserProperties bootstrap = context.getBean(BootstrapUserProperties.class);
+          assertThat(bootstrap.getUsername()).isEqualTo("learner");
+          assertThat(bootstrap.getPassword()).isEqualTo("s3cret");
+        });
+  }
 
-    @Test
-    void failsFastWhenYouTubeApiKeyIsAbsent() {
-        runner.withPropertyValues(
-                        "ulearn.bootstrap.username=learner",
-                        "ulearn.bootstrap.password=s3cret")
-                .run(context -> {
-                    assertThat(context).hasFailed();
-                    assertThat(context.getStartupFailure())
-                            .hasStackTraceContaining("YOUTUBE_API_KEY must be set");
-                });
-    }
+  @Test
+  void failsFastWhenYouTubeApiKeyIsAbsent() {
+    runner
+        .withPropertyValues("ulearn.bootstrap.username=learner", "ulearn.bootstrap.password=s3cret")
+        .run(context -> {
+          assertThat(context).hasFailed();
+          assertThat(context.getStartupFailure())
+              .hasStackTraceContaining("YOUTUBE_API_KEY must be set");
+        });
+  }
 
-    @Test
-    void failsFastWhenBootstrapCredentialsAreAbsent() {
-        runner.withPropertyValues("ulearn.youtube.api-key=yt-key")
-                .run(context -> {
-                    assertThat(context).hasFailed();
-                    assertThat(context.getStartupFailure())
-                            .hasStackTraceContaining("BOOTSTRAP_USERNAME must be set");
-                });
-    }
+  @Test
+  void failsFastWhenBootstrapCredentialsAreAbsent() {
+    runner
+        .withPropertyValues("ulearn.youtube.api-key=yt-key")
+        .run(context -> {
+          assertThat(context).hasFailed();
+          assertThat(context.getStartupFailure())
+              .hasStackTraceContaining("BOOTSTRAP_USERNAME must be set");
+        });
+  }
 
-    @EnableConfigurationProperties({YouTubeProperties.class, BootstrapUserProperties.class})
-    static class PropertiesConfig {
-    }
+  @EnableConfigurationProperties({YouTubeProperties.class, BootstrapUserProperties.class})
+  static class PropertiesConfig {}
 }

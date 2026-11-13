@@ -20,49 +20,50 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
- * Course endpoints for the authenticated owner. Requests carry no user id: the catalog derives the owner
- * from the authenticated principal (ADR-0008).
+ * Course endpoints for the authenticated owner. Requests carry no user id: the catalog derives the
+ * owner from the authenticated principal (ADR-0008).
  */
 @RestController
 @RequestMapping("/api/courses")
 @RequiredArgsConstructor
 public class CourseController {
 
-    private final CourseCatalog courseCatalog;
+  private final CourseCatalog courseCatalog;
 
-    @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    CourseView add(@Valid @RequestBody AddCourseRequest request) {
-        return courseCatalog.addCourse(request.url());
-    }
+  @PostMapping
+  @ResponseStatus(HttpStatus.CREATED)
+  CourseView add(@Valid @RequestBody AddCourseRequest request) {
+    return courseCatalog.addCourse(request.url());
+  }
 
-    @GetMapping
-    List<CourseView> list() {
-        return courseCatalog.listCourses();
-    }
+  @GetMapping
+  List<CourseView> list() {
+    return courseCatalog.listCourses();
+  }
 
-    @GetMapping("/{courseId}")
-    CourseView get(@PathVariable UUID courseId) {
-        return courseCatalog.getCourse(courseId);
-    }
+  @GetMapping("/{courseId}")
+  CourseView get(@PathVariable UUID courseId) {
+    return courseCatalog.getCourse(courseId);
+  }
 
-    @PatchMapping("/{courseId}")
-    CourseView rename(@PathVariable UUID courseId, @Valid @RequestBody RenameCourseRequest request) {
-        return courseCatalog.renameCourse(courseId, request.name());
-    }
+  @PatchMapping("/{courseId}")
+  CourseView rename(@PathVariable UUID courseId, @Valid @RequestBody RenameCourseRequest request) {
+    return courseCatalog.renameCourse(courseId, request.name());
+  }
 
-    @DeleteMapping("/{courseId}")
-    @ResponseStatus(HttpStatus.NO_CONTENT)
-    void delete(@PathVariable UUID courseId) {
-        courseCatalog.deleteCourse(courseId);
-    }
+  @DeleteMapping("/{courseId}")
+  @ResponseStatus(HttpStatus.NO_CONTENT)
+  void delete(@PathVariable UUID courseId) {
+    courseCatalog.deleteCourse(courseId);
+  }
 
-    @PostMapping("/{courseId}/resync")
-    CourseView resync(@PathVariable UUID courseId) {
-        return courseCatalog.resyncCourse(courseId);
-    }
+  @PostMapping("/{courseId}/resync")
+  CourseView resync(@PathVariable UUID courseId) {
+    return courseCatalog.resyncCourse(courseId);
+  }
 
-    public record AddCourseRequest(@NotBlank(message = "url is required") String url) {}
+  public record AddCourseRequest(@NotBlank(message = "url is required") String url) {}
 
-    public record RenameCourseRequest(@NotBlank(message = "name is required") @Size(max = 200) String name) {}
+  public record RenameCourseRequest(
+      @NotBlank(message = "name is required") @Size(max = 200) String name) {}
 }

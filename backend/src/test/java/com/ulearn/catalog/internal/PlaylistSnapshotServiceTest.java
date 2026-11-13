@@ -33,72 +33,72 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 class PlaylistSnapshotServiceTest {
 
-    @Autowired
-    PlaylistSnapshotService snapshotService;
+  @Autowired PlaylistSnapshotService snapshotService;
 
-    @Autowired
-    PlaylistRepository playlistRepository;
+  @Autowired PlaylistRepository playlistRepository;
 
-    @Autowired
-    CourseRepository courseRepository;
+  @Autowired CourseRepository courseRepository;
 
-    @Autowired
-    UserRepository userRepository;
+  @Autowired UserRepository userRepository;
 
-    @MockitoBean
-    YouTubeClient youTubeClient;
+  @MockitoBean YouTubeClient youTubeClient;
 
-    @Test
-    void reusesAFreshSnapshotWithoutASecondApiCall() {
-        when(youTubeClient.resolvePlaylist("PL-cache"))
-                .thenReturn(snapshot("PL-cache", "Cached", video("v1", "One", 0, 60)));
+  @Test
+  void reusesFreshSnapshotWithoutSecondApiCall() {
+    when(youTubeClient.resolvePlaylist("PL-cache"))
+        .thenReturn(snapshot("PL-cache", "Cached", video("v1", "One", 0, 60)));
 
-        snapshotService.getOrCreateFresh("PL-cache");
-        snapshotService.getOrCreateFresh("PL-cache");
+    snapshotService.getOrCreateFresh("PL-cache");
+    snapshotService.getOrCreateFresh("PL-cache");
 
-        verify(youTubeClient, times(1)).resolvePlaylist("PL-cache");
-        assertThat(playlistRepository.findByYoutubePlaylistId("PL-cache")).isPresent();
-        assertThat(playlistRepository.count()).isEqualTo(1);
-    }
+    verify(youTubeClient, times(1)).resolvePlaylist("PL-cache");
+    assertThat(playlistRepository.findByYoutubePlaylistId("PL-cache")).isPresent();
+    assertThat(playlistRepository.count()).isEqualTo(1);
+  }
 
-    @Test
-    void refreshesAStaleSnapshot() {
-        when(youTubeClient.resolvePlaylist("PL-stale"))
-                .thenReturn(snapshot("PL-stale", "Stale", video("v1", "One", 0, 60)));
+  @Test
+  void refreshesStaleSnapshot() {
+    when(youTubeClient.resolvePlaylist("PL-stale"))
+        .thenReturn(snapshot("PL-stale", "Stale", video("v1", "One", 0, 60)));
 
-        PlaylistEntity playlist = snapshotService.getOrCreateFresh("PL-stale");
-        playlist.markSynced(Instant.now().minus(Duration.ofDays(30)));
-        playlistRepository.save(playlist);
+    PlaylistEntity playlist = snapshotService.getOrCreateFresh("PL-stale");
+    playlist.markSynced(Instant.now().minus(Duration.ofDays(30)));
+    playlistRepository.save(playlist);
 
-        snapshotService.getOrCreateFresh("PL-stale");
+    snapshotService.getOrCreateFresh("PL-stale");
 
-        verify(youTubeClient, times(2)).resolvePlaylist("PL-stale");
-    }
+    verify(youTubeClient, times(2)).resolvePlaylist("PL-stale");
+  }
 
-    @Test
-    void persistsTwoCoursesReferencingOneSharedPlaylist() {
-        when(youTubeClient.resolvePlaylist("PL-shared"))
-                .thenReturn(snapshot("PL-shared", "Shared", video("v1", "One", 0, 60)));
-        PlaylistEntity playlist = snapshotService.getOrCreateFresh("PL-shared");
+  @Test
+  void persistsTwoCoursesReferencingOneSharedPlaylist() {
+    when(youTubeClient.resolvePlaylist("PL-shared"))
+        .thenReturn(snapshot("PL-shared", "Shared", video("v1", "One", 0, 60)));
+    PlaylistEntity playlist = snapshotService.getOrCreateFresh("PL-shared");
 
-        courseRepository.save(new CourseEntity(owner("owner-a"), playlist, "A", "https://youtube.com/a"));
-        courseRepository.save(new CourseEntity(owner("owner-b"), playlist, "B", "https://youtube.com/b"));
+    courseRepository.save(
+        new CourseEntity(owner("owner-a"), playlist, "A", "https://youtube.com/a"));
+    courseRepository.save(
+        new CourseEntity(owner("owner-b"), playlist, "B", "https://youtube.com/b"));
 
-        List<CourseEntity> courses = courseRepository.findAll();
-        assertThat(courses).hasSize(2);
-        assertThat(courses).allSatisfy(course -> assertThat(course.getPlaylist().getId()).isEqualTo(playlist.getId()));
-        assertThat(playlistRepository.count()).isEqualTo(1);
-    }
+    List<CourseEntity> courses = courseRepository.findAll();
+    assertThat(courses).hasSize(2);
+    assertThat(courses)
+        .allSatisfy(course -> assertThat(course.getPlaylist().getId()).isEqualTo(playlist.getId()));
+    assertThat(playlistRepository.count()).isEqualTo(1);
+  }
 
-    private UUID owner(String username) {
-        return userRepository.save(new UserEntity(username, username)).getId();
-    }
+  private UUID owner(String username) {
+    return userRepository.save(new UserEntity(username, username)).getId();
+  }
 
-    private static ResolvedPlaylist snapshot(String playlistId, String title, ResolvedVideo... videos) {
-        return new ResolvedPlaylist(playlistId, title, List.of(videos));
-    }
+  private static ResolvedPlaylist snapshot(
+      String playlistId, String title, ResolvedVideo... videos) {
+    return new ResolvedPlaylist(playlistId, title, List.of(videos));
+  }
 
-    private static ResolvedVideo video(String videoId, String title, int position, int durationSeconds) {
-        return new ResolvedVideo(videoId, title, position, durationSeconds);
-    }
+  private static ResolvedVideo video(
+      String videoId, String title, int position, int durationSeconds) {
+    return new ResolvedVideo(videoId, title, position, durationSeconds);
+  }
 }

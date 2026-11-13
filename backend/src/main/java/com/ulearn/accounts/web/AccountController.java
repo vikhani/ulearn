@@ -17,13 +17,13 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 class AccountController {
 
-    private final CurrentUserProvider currentUserProvider;
+  private final CurrentUserProvider currentUserProvider;
 
-    @GetMapping
-    AccountResponse currentAccount() {
-        AuthenticatedUser user = currentUserProvider.currentUser();
-        return new AccountResponse(user.id(), user.username());
-    }
+  @GetMapping
+  AccountResponse currentAccount() {
+    AuthenticatedUser user = currentUserProvider.currentUser();
+    return new AccountResponse(user.id(), user.username());
+  }
 
-    record AccountResponse(UUID id, String username) {}
+  record AccountResponse(UUID id, String username) {}
 }

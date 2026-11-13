@@ -20,51 +20,53 @@ import org.springframework.security.core.context.SecurityContextHolder;
 
 class CurrentUserProviderImplTest {
 
-    private final UserRepository userRepository = mock(UserRepository.class);
-    private final CurrentUserProviderImpl provider = new CurrentUserProviderImpl(userRepository);
+  private final UserRepository userRepository = mock(UserRepository.class);
+  private final CurrentUserProviderImpl provider = new CurrentUserProviderImpl(userRepository);
 
-    @AfterEach
-    void clearContext() {
-        SecurityContextHolder.clearContext();
-    }
+  @AfterEach
+  void clearContext() {
+    SecurityContextHolder.clearContext();
+  }
 
-    private static void authenticateAs(String username) {
-        SecurityContextHolder.getContext()
-                .setAuthentication(new UsernamePasswordAuthenticationToken(
-                        username, "credentials", AuthorityUtils.createAuthorityList("ROLE_USER")));
-    }
+  private static void authenticateAs(String username) {
+    SecurityContextHolder.getContext()
+        .setAuthentication(
+            new UsernamePasswordAuthenticationToken(
+                username, "credentials", AuthorityUtils.createAuthorityList("ROLE_USER")));
+  }
 
-    @Test
-    void returnsTheRegisteredUserForTheAuthenticatedPrincipal() {
-        UUID id = UUID.randomUUID();
-        UserEntity entity = mock(UserEntity.class);
-        when(entity.getId()).thenReturn(id);
-        when(entity.getUsername()).thenReturn("learner");
-        when(userRepository.findByUsername("learner")).thenReturn(Optional.of(entity));
-        authenticateAs("learner");
+  @Test
+  void returnsTheRegisteredUserForTheAuthenticatedPrincipal() {
+    UUID id = UUID.randomUUID();
+    UserEntity entity = mock(UserEntity.class);
+    when(entity.getId()).thenReturn(id);
+    when(entity.getUsername()).thenReturn("learner");
+    when(userRepository.findByUsername("learner")).thenReturn(Optional.of(entity));
+    authenticateAs("learner");
 
-        assertThat(provider.currentUser()).isEqualTo(new AuthenticatedUser(id, "learner"));
-    }
+    assertThat(provider.currentUser()).isEqualTo(new AuthenticatedUser(id, "learner"));
+  }
 
-    @Test
-    void rejectsWhenThereIsNoAuthentication() {
-        assertThatThrownBy(provider::currentUser).isInstanceOf(AccessDeniedException.class);
-    }
+  @Test
+  void rejectsWhenThereIsNoAuthentication() {
+    assertThatThrownBy(provider::currentUser).isInstanceOf(AccessDeniedException.class);
+  }
 
-    @Test
-    void rejectsAnonymousAuthentication() {
-        SecurityContextHolder.getContext()
-                .setAuthentication(new AnonymousAuthenticationToken(
-                        "key", "anonymousUser", AuthorityUtils.createAuthorityList("ROLE_ANONYMOUS")));
+  @Test
+  void rejectsAnonymousAuthentication() {
+    SecurityContextHolder.getContext()
+        .setAuthentication(
+            new AnonymousAuthenticationToken(
+                "key", "anonymousUser", AuthorityUtils.createAuthorityList("ROLE_ANONYMOUS")));
 
-        assertThatThrownBy(provider::currentUser).isInstanceOf(AccessDeniedException.class);
-    }
+    assertThatThrownBy(provider::currentUser).isInstanceOf(AccessDeniedException.class);
+  }
 
-    @Test
-    void rejectsAnAuthenticatedPrincipalWithNoRegisteredUser() {
-        when(userRepository.findByUsername("ghost")).thenReturn(Optional.empty());
-        authenticateAs("ghost");
+  @Test
+  void rejectsAnAuthenticatedPrincipalWithNoRegisteredUser() {
+    when(userRepository.findByUsername("ghost")).thenReturn(Optional.empty());
+    authenticateAs("ghost");
 
-        assertThatThrownBy(provider::currentUser).isInstanceOf(AccessDeniedException.class);
-    }
+    assertThatThrownBy(provider::currentUser).isInstanceOf(AccessDeniedException.class);
+  }
 }

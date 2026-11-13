@@ -10,21 +10,23 @@ import java.util.UUID;
  */
 public interface CourseCatalog {
 
-    /** Adds a Course from a YouTube playlist URL, reusing an existing Playlist snapshot when possible. */
-    CourseView addCourse(String sourceUrl);
+  /**
+   * Adds a Course from a YouTube playlist URL, reusing an existing Playlist snapshot when possible.
+   */
+  CourseView addCourse(String sourceUrl);
 
-    /** Lists the authenticated owner's active Courses, newest first. */
-    List<CourseView> listCourses();
+  /** Lists the authenticated owner's active Courses, newest first. */
+  List<CourseView> listCourses();
 
-    /** Loads one owned Course with its ordered lessons. */
-    CourseView getCourse(UUID courseId);
+  /** Loads one owned Course with its ordered lessons. */
+  CourseView getCourse(UUID courseId);
 
-    /** Renames an owned Course. */
-    CourseView renameCourse(UUID courseId, String name);
+  /** Renames an owned Course. */
+  CourseView renameCourse(UUID courseId, String name);
 
-    /** Soft-deletes an owned Course; it is hidden but its references stay intact. */
-    void deleteCourse(UUID courseId);
+  /** Soft-deletes an owned Course; it is hidden but its references stay intact. */
+  void deleteCourse(UUID courseId);
 
-    /** Re-syncs an owned Course against its source playlist. */
-    CourseView resyncCourse(UUID courseId);
+  /** Re-syncs an owned Course against its source playlist. */
+  CourseView resyncCourse(UUID courseId);
 }

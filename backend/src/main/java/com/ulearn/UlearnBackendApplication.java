@@ -8,8 +8,7 @@ import org.springframework.boot.context.properties.ConfigurationPropertiesScan;
 @ConfigurationPropertiesScan
 public class UlearnBackendApplication {
 
-	public static void main(String[] args) {
-		SpringApplication.run(UlearnBackendApplication.class, args);
-	}
-
+  public static void main(String[] args) {
+    SpringApplication.run(UlearnBackendApplication.class, args);
+  }
 }

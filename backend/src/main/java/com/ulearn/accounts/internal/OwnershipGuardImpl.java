@@ -13,14 +13,14 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 class OwnershipGuardImpl implements OwnershipGuard {
 
-    private final CurrentUserProvider currentUserProvider;
+  private final CurrentUserProvider currentUserProvider;
 
-    @Override
-    public void requireOwner(UUID ownerId) {
-        UUID currentUserId = currentUserProvider.currentUser().id();
-        if (!currentUserId.equals(ownerId)) {
-            log.warn("Access denied: user {} is not the owner {}", currentUserId, ownerId);
-            throw new AccessDeniedException("Resource not found");
-        }
+  @Override
+  public void requireOwner(UUID ownerId) {
+    UUID currentUserId = currentUserProvider.currentUser().id();
+    if (!currentUserId.equals(ownerId)) {
+      log.warn("Access denied: user {} is not the owner {}", currentUserId, ownerId);
+      throw new AccessDeniedException("Resource not found");
     }
+  }
 }

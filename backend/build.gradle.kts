@@ -1,9 +1,11 @@
 plugins {
 	java
+	checkstyle
 	jacoco
 	id("org.springframework.boot") version "4.1.2"
 	id("io.spring.dependency-management") version "1.1.7"
 	id("info.solidsoft.pitest") version "1.19.0"
+	id("com.diffplug.spotless") version "8.11.0"
 }
 
 group = "com.ulearn"
@@ -56,6 +58,36 @@ dependencyManagement {
 
 tasks.named<Jar>("jar") {
 	enabled = false
+}
+
+// Checkstyle with the bundled Google checks (google_checks.xml from the Checkstyle artifact) so the
+// rule set tracks `toolVersion` instead of a checked-in copy that drifts. Google's config ships
+// severity "warning"; promote it to "error" so violations fail `check` (and therefore `build`).
+// Justified exemptions live in config/checkstyle/suppressions.xml.
+checkstyle {
+	toolVersion = "14.4.0"
+	config = resources.text.fromArchiveEntry(
+		configurations.checkstyle.get().first { it.name.startsWith("checkstyle-") },
+		"google_checks.xml",
+	)
+	isIgnoreFailures = false
+	maxWarnings = 0
+	configProperties = mapOf(
+		"org.checkstyle.google.severity" to "error",
+		"org.checkstyle.google.suppressionfilter.config" to "$rootDir/config/checkstyle/suppressions.xml",
+	)
+}
+
+// google-java-format is the reference implementation of Google style and the mechanical fix for
+// Checkstyle's formatting rules (indentation, line length, import order, tabs). `spotlessCheck` is
+// wired into `check`, so `build` fails on unformatted code; run `./gradlew spotlessApply` to fix.
+spotless {
+	java {
+		googleJavaFormat()
+		removeUnusedImports()
+		trimTrailingWhitespace()
+		endWithNewline()
+	}
 }
 
 tasks.withType<Test> {

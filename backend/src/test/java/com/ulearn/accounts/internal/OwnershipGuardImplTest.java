@@ -10,19 +10,22 @@ import org.springframework.security.access.AccessDeniedException;
 
 class OwnershipGuardImplTest {
 
-    private static final UUID OWNER = UUID.randomUUID();
+  private static final UUID OWNER = UUID.randomUUID();
 
-    @Test
-    void allowsTheOwner() {
-        OwnershipGuardImpl guard = new OwnershipGuardImpl(() -> new AuthenticatedUser(OWNER, "learner"));
+  @Test
+  void allowsTheOwner() {
+    OwnershipGuardImpl guard =
+        new OwnershipGuardImpl(() -> new AuthenticatedUser(OWNER, "learner"));
 
-        assertThatCode(() -> guard.requireOwner(OWNER)).doesNotThrowAnyException();
-    }
+    assertThatCode(() -> guard.requireOwner(OWNER)).doesNotThrowAnyException();
+  }
 
-    @Test
-    void deniesAnIdentityThatIsNotTheOwner() {
-        OwnershipGuardImpl guard = new OwnershipGuardImpl(() -> new AuthenticatedUser(OWNER, "learner"));
+  @Test
+  void deniesAnIdentityThatIsNotTheOwner() {
+    OwnershipGuardImpl guard =
+        new OwnershipGuardImpl(() -> new AuthenticatedUser(OWNER, "learner"));
 
-        assertThatThrownBy(() -> guard.requireOwner(UUID.randomUUID())).isInstanceOf(AccessDeniedException.class);
-    }
+    assertThatThrownBy(() -> guard.requireOwner(UUID.randomUUID()))
+        .isInstanceOf(AccessDeniedException.class);
+  }
 }

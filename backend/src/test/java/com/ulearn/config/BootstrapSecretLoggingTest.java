@@ -17,9 +17,9 @@ import org.springframework.test.context.ActiveProfiles;
 @ExtendWith(OutputCaptureExtension.class)
 class BootstrapSecretLoggingTest {
 
-    @Test
-    void bootstrapPasswordNeverAppearsInStartupLogs(CapturedOutput output) {
-        assertThat(output).contains(":: Spring Boot ::");
-        assertThat(output).doesNotContain("unique-bootstrap-secret");
-    }
+  @Test
+  void bootstrapPasswordNeverAppearsInStartupLogs(CapturedOutput output) {
+    assertThat(output).contains(":: Spring Boot ::");
+    assertThat(output).doesNotContain("unique-bootstrap-secret");
+  }
 }
