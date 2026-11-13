@@ -8,5 +8,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface PlaylistRepository extends JpaRepository<PlaylistEntity, UUID> {
 
-    Optional<PlaylistEntity> findByYoutubePlaylistId(String youtubePlaylistId);
+  Optional<PlaylistEntity> findByYoutubePlaylistId(String youtubePlaylistId);
 }

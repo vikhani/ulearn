@@ -39,6 +39,13 @@ jobs:
           name: backend-mutation-report
           path: backend/build/reports/pitest
           if-no-files-found: ignore
+      - name: Upload backend Checkstyle report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: backend-checkstyle
+          path: backend/build/reports/checkstyle
+          if-no-files-found: ignore
 
   frontend:
     runs-on: ubuntu-latest

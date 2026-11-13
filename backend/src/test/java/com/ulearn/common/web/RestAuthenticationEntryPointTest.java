@@ -9,22 +9,23 @@ import org.springframework.security.authentication.InsufficientAuthenticationExc
 
 class RestAuthenticationEntryPointTest {
 
-    private final RestAuthenticationEntryPoint entryPoint = new RestAuthenticationEntryPoint();
+  private final RestAuthenticationEntryPoint entryPoint = new RestAuthenticationEntryPoint();
 
-    @Test
-    void writesUnauthorizedProblemResponseWithBasicChallenge() throws Exception {
-        MockHttpServletRequest request = new MockHttpServletRequest();
-        MockHttpServletResponse response = new MockHttpServletResponse();
+  @Test
+  void writesUnauthorizedProblemResponseWithBasicChallenge() throws Exception {
+    MockHttpServletRequest request = new MockHttpServletRequest();
+    MockHttpServletResponse response = new MockHttpServletResponse();
 
-        entryPoint.commence(request, response, new InsufficientAuthenticationException("no credentials"));
+    entryPoint.commence(
+        request, response, new InsufficientAuthenticationException("no credentials"));
 
-        assertThat(response.getStatus()).isEqualTo(401);
-        assertThat(response.getContentType()).contains("application/problem+json");
-        assertThat(response.getCharacterEncoding()).isEqualTo("UTF-8");
-        assertThat(response.getHeader("WWW-Authenticate")).isEqualTo("Basic realm=\"ulearn\"");
-        assertThat(response.getContentAsString())
-                .contains("\"status\":401")
-                .contains("\"title\":\"Unauthorized\"")
-                .contains("Authentication is required");
-    }
+    assertThat(response.getStatus()).isEqualTo(401);
+    assertThat(response.getContentType()).contains("application/problem+json");
+    assertThat(response.getCharacterEncoding()).isEqualTo("UTF-8");
+    assertThat(response.getHeader("WWW-Authenticate")).isEqualTo("Basic realm=\"ulearn\"");
+    assertThat(response.getContentAsString())
+        .contains("\"status\":401")
+        .contains("\"title\":\"Unauthorized\"")
+        .contains("Authentication is required");
+  }
 }

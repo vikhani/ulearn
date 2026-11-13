@@ -6,17 +6,17 @@ import java.util.UUID;
 
 /**
  * A Course as returned to its owner: the user-owned fields plus a summary of the shared Playlist
- * snapshot it references. {@code lessons} is populated on detail responses and empty on list responses.
- * {@code hasLessons} is false for an empty playlist, where progress is undefined.
+ * snapshot it references. {@code lessons} is populated on detail responses and empty on list
+ * responses. {@code hasLessons} is false for an empty playlist, where progress is undefined.
  */
 public record CourseView(
-        UUID id,
-        String name,
-        String sourceUrl,
-        String playlistId,
-        String playlistTitle,
-        int lessonCount,
-        boolean hasLessons,
-        Instant createdAt,
-        Instant lastSyncedAt,
-        List<LessonView> lessons) {}
+    UUID id,
+    String name,
+    String sourceUrl,
+    String playlistId,
+    String playlistTitle,
+    int lessonCount,
+    boolean hasLessons,
+    Instant createdAt,
+    Instant lastSyncedAt,
+    List<LessonView> lessons) {}

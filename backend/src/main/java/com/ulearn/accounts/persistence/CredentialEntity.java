@@ -12,9 +12,9 @@ import lombok.NoArgsConstructor;
 
 /**
  * A user's credential, stored only as a salted one-way BCrypt hash. It is a one-to-one extension of
- * {@link UserEntity}: {@code user_id} is the primary key and a foreign key to {@code users}, so a user
- * has at most one credential. Kept separate so password material has its own lifecycle (ADR-0008;
- * {@code user-accounts} spec, "Password storage").
+ * {@link UserEntity}: {@code user_id} is the primary key and a foreign key to {@code users}, so a
+ * user has at most one credential. Kept separate so password material has its own lifecycle
+ * (ADR-0008; {@code user-accounts} spec, "Password storage").
  */
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -22,24 +22,24 @@ import lombok.NoArgsConstructor;
 @Table(name = "credentials")
 public class CredentialEntity {
 
-    @Id
-    @Column(name = "user_id")
-    private UUID userId;
+  @Id
+  @Column(name = "user_id")
+  private UUID userId;
 
-    @Column(name = "password_hash", nullable = false)
-    private String passwordHash;
+  @Column(name = "password_hash", nullable = false)
+  private String passwordHash;
 
-    @Column(name = "updated_at", nullable = false)
-    private Instant updatedAt;
+  @Column(name = "updated_at", nullable = false)
+  private Instant updatedAt;
 
-    public CredentialEntity(UUID userId, String passwordHash) {
-        this.userId = userId;
-        this.passwordHash = passwordHash;
-        this.updatedAt = Instant.now();
-    }
+  public CredentialEntity(UUID userId, String passwordHash) {
+    this.userId = userId;
+    this.passwordHash = passwordHash;
+    this.updatedAt = Instant.now();
+  }
 
-    public void setPasswordHash(String passwordHash) {
-        this.passwordHash = passwordHash;
-        this.updatedAt = Instant.now();
-    }
+  public void setPasswordHash(String passwordHash) {
+    this.passwordHash = passwordHash;
+    this.updatedAt = Instant.now();
+  }
 }

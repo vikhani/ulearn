@@ -18,14 +18,14 @@ import org.springframework.web.context.WebApplicationContext;
 @Import(TestcontainersConfiguration.class)
 class HealthEndpointTest {
 
-    @Autowired
-    WebApplicationContext context;
+  @Autowired WebApplicationContext context;
 
-    @Test
-    void healthEndpointReportsUp() throws Exception {
-        MockMvc mockMvc = MockMvcBuilders.webAppContextSetup(context).build();
-        mockMvc.perform(get("/health"))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.status").value("UP"));
-    }
+  @Test
+  void healthEndpointReportsUp() throws Exception {
+    MockMvc mockMvc = MockMvcBuilders.webAppContextSetup(context).build();
+    mockMvc
+        .perform(get("/health"))
+        .andExpect(status().isOk())
+        .andExpect(jsonPath("$.status").value("UP"));
+  }
 }

@@ -15,24 +15,25 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 class CurrentUserProviderImpl implements CurrentUserProvider {
 
-    private final UserRepository userRepository;
+  private final UserRepository userRepository;
 
-    @Override
-    public AuthenticatedUser currentUser() {
-        String username = authenticatedUsername();
-        UserEntity user = userRepository
-                .findByUsername(username)
-                .orElseThrow(() -> new AccessDeniedException("Authenticated user is not registered"));
-        return new AuthenticatedUser(user.getId(), user.getUsername());
-    }
+  @Override
+  public AuthenticatedUser currentUser() {
+    String username = authenticatedUsername();
+    UserEntity user =
+        userRepository
+            .findByUsername(username)
+            .orElseThrow(() -> new AccessDeniedException("Authenticated user is not registered"));
+    return new AuthenticatedUser(user.getId(), user.getUsername());
+  }
 
-    private String authenticatedUsername() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication == null
-                || !authentication.isAuthenticated()
-                || authentication instanceof AnonymousAuthenticationToken) {
-            throw new AccessDeniedException("No authenticated user");
-        }
-        return authentication.getName();
+  private String authenticatedUsername() {
+    Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+    if (authentication == null
+        || !authentication.isAuthenticated()
+        || authentication instanceof AnonymousAuthenticationToken) {
+      throw new AccessDeniedException("No authenticated user");
     }
+    return authentication.getName();
+  }
 }

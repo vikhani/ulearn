@@ -14,8 +14,8 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 /**
- * An identified user that owns Courses, plans, compilations, and shares. Under the staged single-user
- * model there is exactly one row, seeded from the bootstrap configuration (ADR-0008).
+ * An identified user that owns Courses, plans, compilations, and shares. Under the staged
+ * single-user model there is exactly one row, seeded from the bootstrap configuration (ADR-0008).
  */
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -23,23 +23,23 @@ import lombok.Setter;
 @Table(name = "users")
 public class UserEntity {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.UUID)
+  private UUID id;
 
-    @Column(nullable = false, unique = true)
-    private String username;
+  @Column(nullable = false, unique = true)
+  private String username;
 
-    @Setter
-    @Column(name = "display_name")
-    private String displayName;
+  @Setter
+  @Column(name = "display_name")
+  private String displayName;
 
-    @Column(name = "created_at", nullable = false)
-    private Instant createdAt;
+  @Column(name = "created_at", nullable = false)
+  private Instant createdAt;
 
-    public UserEntity(String username, String displayName) {
-        this.username = username;
-        this.displayName = displayName;
-        this.createdAt = Instant.now();
-    }
+  public UserEntity(String username, String displayName) {
+    this.username = username;
+    this.displayName = displayName;
+    this.createdAt = Instant.now();
+  }
 }

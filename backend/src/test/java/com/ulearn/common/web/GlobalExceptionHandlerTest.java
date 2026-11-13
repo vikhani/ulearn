@@ -16,27 +16,27 @@ import org.springframework.web.bind.annotation.RestController;
 
 class GlobalExceptionHandlerTest {
 
-    @RestController
-    static class ProbeController {
-        @PostMapping("/probe")
-        void probe(@Valid @RequestBody ProbeBody body) {
-        }
-    }
+  @RestController
+  static class ProbeController {
+    @PostMapping("/probe")
+    void probe(@Valid @RequestBody ProbeBody body) {}
+  }
 
-    record ProbeBody(@NotBlank String name) {
-    }
+  record ProbeBody(@NotBlank String name) {}
 
-    private final MockMvc mockMvc = MockMvcBuilders.standaloneSetup(new ProbeController())
-            .setControllerAdvice(new GlobalExceptionHandler())
-            .build();
+  private final MockMvc mockMvc =
+      MockMvcBuilders.standaloneSetup(new ProbeController())
+          .setControllerAdvice(new GlobalExceptionHandler())
+          .build();
 
-    @Test
-    void invalidBodyReturnsProblemDetail() throws Exception {
-        mockMvc.perform(post("/probe").contentType(APPLICATION_JSON).content("{}"))
-                .andExpect(status().isBadRequest())
-                .andExpect(jsonPath("$.title").value("Validation failed"))
-                .andExpect(jsonPath("$.status").value(400))
-                .andExpect(jsonPath("$.errors").isArray())
-                .andExpect(jsonPath("$.errors[0]").value("name: must not be blank"));
-    }
+  @Test
+  void invalidBodyReturnsProblemDetail() throws Exception {
+    mockMvc
+        .perform(post("/probe").contentType(APPLICATION_JSON).content("{}"))
+        .andExpect(status().isBadRequest())
+        .andExpect(jsonPath("$.title").value("Validation failed"))
+        .andExpect(jsonPath("$.status").value(400))
+        .andExpect(jsonPath("$.errors").isArray())
+        .andExpect(jsonPath("$.errors[0]").value("name: must not be blank"));
+  }
 }

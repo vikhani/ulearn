@@ -62,12 +62,12 @@ All configuration comes from environment variables; no secrets are baked into im
 
 | Job | Runs |
 | --- | --- |
-| `backend` | `./gradlew --no-daemon build` (Temurin 21, Gradle cache); fails on coverage below threshold or ArchUnit violations |
+| `backend` | `./gradlew --no-daemon build` (Temurin 21, Gradle cache); fails on coverage below threshold, ArchUnit, Checkstyle, or formatting violations |
 | `frontend` | `npm ci`, `npm run lint`, `npm test` (coverage-enforced), `npm run build` |
 | `openspec` | installs `@fission-ai/openspec@1.17.0`, `openspec validate --strict` |
 | `docker` | `docker compose build` |
 
-Both `backend` and `frontend` publish their coverage HTML as workflow artifacts (`backend-coverage`, `frontend-coverage`).
+Both `backend` and `frontend` publish their coverage HTML as workflow artifacts (`backend-coverage`, `frontend-coverage`); the `backend` job also uploads the Checkstyle report (`backend-checkstyle`).
 
 Additional free automations:
 
@@ -133,3 +133,20 @@ closes that gap by mutating production bytecode and checking whether the suite f
 - **Layering** — `@RestController` classes must not depend on repositories or JPA entities; `@Configuration` lives in `..config..`, `@RestController` in `..web..`, `@Repository` in `..persistence..`.
 
 Rules whose packages do not exist yet (the capabilities, controllers, repositories) are allowed to match no classes and start enforcing as those classes land. Add capability names to `ArchitectureTest` when a new one is introduced. Run locally with `cd backend && ./gradlew --no-daemon test --tests 'com.ulearn.arch.ArchitectureTest'`.
+
+## Code style
+
+The backend follows the [Google Java Style](https://google.github.io/styleguide/javaguide.html) through two complementary gates, both wired into `check`, so `./gradlew --no-daemon build` fails on a violation:
+
+- **Checkstyle** runs the *Google checks* bundled with Checkstyle (`google_checks.xml` from the pinned `toolVersion` in `backend/build.gradle.kts`), promoted from their default `warning` severity to `error`. `checkstyleMain` covers `src/main`, `checkstyleTest` covers `src/test`.
+- **Spotless** runs [google-java-format](https://github.com/google/google-java-format), the reference formatter for the same rules, so fixes are mechanical and reproducible.
+
+Run locally (from `backend/`):
+
+- Check style and formatting: `./gradlew --no-daemon spotlessCheck checkstyleMain checkstyleTest` (or just `check`, which also runs tests and the other gates).
+- Fix formatting automatically: `./gradlew --no-daemon spotlessApply`.
+- Reports land in `backend/build/reports/checkstyle/{main,test}.html`.
+
+Justified exemptions live in `backend/config/checkstyle/suppressions.xml`. Today it disables only the two Javadoc *presence* checks (`MissingJavadocMethod`, `MissingJavadocType`) — this codebase documents intent in names and tests rather than method-level Javadoc — while keeping Google's Javadoc *quality* rules. There is no `ignoreFailures` and no baseline: every remaining rule must pass.
+
+The frontend keeps its existing ESLint gate (`npm run lint`).

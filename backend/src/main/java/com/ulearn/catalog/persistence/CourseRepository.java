@@ -9,9 +9,9 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface CourseRepository extends JpaRepository<CourseEntity, UUID> {
 
-    List<CourseEntity> findByOwnerIdAndDeletedAtIsNullOrderByCreatedAtDesc(UUID ownerId);
+  List<CourseEntity> findByOwnerIdAndDeletedAtIsNullOrderByCreatedAtDesc(UUID ownerId);
 
-    Optional<CourseEntity> findByIdAndOwnerIdAndDeletedAtIsNull(UUID id, UUID ownerId);
+  Optional<CourseEntity> findByIdAndOwnerIdAndDeletedAtIsNull(UUID id, UUID ownerId);
 
-    boolean existsByOwnerIdAndPlaylistIdAndDeletedAtIsNull(UUID ownerId, UUID playlistId);
+  boolean existsByOwnerIdAndPlaylistIdAndDeletedAtIsNull(UUID ownerId, UUID playlistId);
 }
