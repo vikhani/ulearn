@@ -1,8 +1,19 @@
+// Project-scoped opencode config, deep-merged over the global
+// ~/.config/opencode/opencode.json. JSONC so the intent of each rule is
+// documented inline. See https://opencode.ai/docs/config and
+// https://opencode.ai/docs/permissions.
+//
+// Rule shape: "permission": { <tool>: { <glob>: "allow" | "ask" | "deny" } }.
+// Rules are evaluated in order and the LAST matching rule wins, so broad
+// defaults come first and narrow exceptions come last.
 {
   "$schema": "https://opencode.ai/config.json",
   "permission": {
     "bash": {
+      // Default: ask. Everything below is an explicit exception.
       "*": "ask",
+
+      // Read-only inspection: no side effects, safe to run unattended.
       "ls *": "allow",
       "pwd": "allow",
       "cat *": "allow",
@@ -11,6 +22,8 @@
       "grep *": "allow",
       "which *": "allow",
       "command -v *": "allow",
+
+      // Git: routine read and local-history flow is allowed.
       "git status*": "allow",
       "git diff*": "allow",
       "git log*": "allow",
@@ -23,10 +36,15 @@
       "git fetch*": "allow",
       "git pull*": "allow",
       "git push*": "allow",
+      // Pushing is allowed, but force pushes and pushes that target
+      // main/master must be confirmed (they rewrite or publish shared
+      // history). Listed after "git push*" so they win (last match).
       "git push*--force*": "ask",
       "git push* -f*": "ask",
       "git push* main*": "ask",
       "git push* master*": "ask",
+
+      // gh: general use is allowed, but destructive commands are denied.
       "gh *": "allow",
       "gh repo delete*": "deny",
       "gh release delete*": "deny",
@@ -34,14 +52,22 @@
       "gh variable delete*": "deny",
       "gh api *DELETE*": "deny",
       "gh *--force*": "deny",
+
+      // Build/test tooling for this repo.
       "./gradlew *": "allow",
       "make *": "allow",
       "npm *": "allow",
       "openspec *": "allow",
       "docker compose *": "allow",
       "docker info*": "allow",
+
+      // Delete is destructive: confirm every time.
       "rm *": "ask"
     },
+
+    // read/grep/glob share one policy: readable/searchable by default, but
+    // never secrets. Denials mirror the repo's .gitignore (which ignores
+    // .env and .env.* but keeps .env.example), plus common key material.
     "read": {
       "*": "allow",
       "**/.env": "deny",
@@ -87,6 +113,9 @@
       "**/.npmrc": "deny",
       "**/.netrc": "deny"
     },
+
+    // Files outside the project: ask by default, but never touch cloud/SSH
+    // credentials or env files.
     "external_directory": {
       "*": "ask",
       "~/.ssh/**": "deny",
