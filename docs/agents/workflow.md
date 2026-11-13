@@ -65,4 +65,4 @@ Docker must be running for Testcontainers.
 ## Conventions that bite
 
 - Backend is **Gradle (Kotlin DSL)**; always use the `./gradlew` wrapper. In Gradle 9 the `-B` alias is gone — use `--no-daemon`.
-- Permissions are scoped in `.opencode/opencode.json` (this project allows `git push*` and `gh *`). Restart opencode after editing it.
+- Permissions are scoped in `.opencode/opencode.jsonc` (JSONC, so rules are commented inline). This project allows `git push*` and `gh *` but asks on force pushes / pushes to `main`/`master` and denies destructive `gh` commands; `read`/`grep`/`glob` cannot touch secrets. Restart opencode after editing it.
