@@ -5,7 +5,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import com.ulearn.TestcontainersConfiguration;
+import com.ulearn.BaseIntegrationTest;
 import com.ulearn.accounts.persistence.UserEntity;
 import com.ulearn.accounts.persistence.UserRepository;
 import com.ulearn.catalog.persistence.CourseEntity;
@@ -21,17 +21,11 @@ import java.util.List;
 import java.util.UUID;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Import;
-import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.transaction.annotation.Transactional;
 
-@SpringBootTest
-@ActiveProfiles("test")
-@Import(TestcontainersConfiguration.class)
 @Transactional
-class PlaylistSnapshotServiceTest {
+class PlaylistSnapshotServiceTest extends BaseIntegrationTest {
 
   @Autowired PlaylistSnapshotService snapshotService;
 

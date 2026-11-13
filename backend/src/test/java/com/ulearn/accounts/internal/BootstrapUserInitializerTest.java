@@ -2,22 +2,16 @@ package com.ulearn.accounts.internal;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.ulearn.TestcontainersConfiguration;
+import com.ulearn.BaseIntegrationTest;
 import com.ulearn.accounts.persistence.CredentialEntity;
 import com.ulearn.accounts.persistence.CredentialRepository;
 import com.ulearn.accounts.persistence.UserEntity;
 import com.ulearn.accounts.persistence.UserRepository;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.Import;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.test.context.ActiveProfiles;
 
-@SpringBootTest
-@ActiveProfiles("test")
-@Import(TestcontainersConfiguration.class)
-class BootstrapUserInitializerTest {
+class BootstrapUserInitializerTest extends BaseIntegrationTest {
 
   @Autowired BootstrapUserInitializer initializer;
 

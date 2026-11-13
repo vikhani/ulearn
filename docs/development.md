@@ -29,6 +29,7 @@ Copy `.env.example` to `.env` (the setup script does this). Variables:
 | `YOUTUBE_API_KEY` | Server-side YouTube Data API key |
 | `BOOTSTRAP_USERNAME`, `BOOTSTRAP_PASSWORD` | Interim single-user credentials (ADR-0008) |
 | `CATALOG_FRESHNESS_THRESHOLD` | ISO-8601 duration before a Playlist snapshot is refreshed (default `PT168H`) |
+| `PROGRESS_COMPLETION_THRESHOLD` | Fraction of a Lesson's duration that marks it complete automatically (default `0.95`) |
 | `VITE_API_BASE_URL` | API base URL baked into the frontend build |
 
 Secrets live in `.env` (gitignored) and in GitHub Actions secrets for CI. Never commit them.
@@ -83,6 +84,7 @@ Provide `YOUTUBE_API_KEY`, `BOOTSTRAP_USERNAME`, and `BOOTSTRAP_PASSWORD` as Git
 ## Testing notes
 
 - Backend integration tests use Testcontainers, so Docker must be running.
+- Extend `com.ulearn.BaseIntegrationTest` for backend integration tests rather than repeating `@SpringBootTest`/`@AutoConfigureMockMvc`/`@ActiveProfiles`/`@Import(TestcontainersConfiguration.class)`. The shared annotations keep tests on one cached application context; subclasses add `@Transactional` when they need rollback and `@MockitoBean` for collaborators. Tests that need genuinely different configuration (for example explicit properties or extra `@Import`s) may still extend the base and add those annotations, but avoid declaring a new context when the base would do.
 - Frontend tests use Vitest with Testing Library and jsdom.
 
 ## Coverage gates
