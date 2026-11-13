@@ -203,14 +203,14 @@ class CourseCatalogIntegrationTest {
     }
 
     @Test
-    void deniesAccessToACourseOwnedByAnotherIdentity() throws Exception {
+    void returnsNotFoundForACourseOwnedByAnotherIdentity() throws Exception {
         PlaylistEntity playlist = playlistRepository.save(new PlaylistEntity("PL-other", "Other"));
         UUID otherOwner = userRepository.save(new UserEntity("other-owner", "other-owner")).getId();
         CourseEntity course = courseRepository.save(
                 new CourseEntity(otherOwner, playlist, "Other", "https://youtube.com/other"));
 
         mockMvc.perform(get("/api/courses/" + course.getId()).with(httpBasic("test-user", "test-password")))
-                .andExpect(status().isForbidden());
+                .andExpect(status().isNotFound());
     }
 
     @Test

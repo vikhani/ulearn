@@ -78,8 +78,9 @@ the summary fields (`lessonCount`, `hasLessons`, `lastSyncedAt`). Soft-deleted C
 
 ### `GET /api/courses/{id}`
 
-Returns one owned Course with its ordered lessons. `404` when the Course does not exist or was
-soft-deleted; `403` when it belongs to another owner.
+Returns one owned Course with its ordered lessons. Course lookups are scoped by the authenticated
+owner's id in the query, so a Course that does not exist, was soft-deleted, or belongs to another owner
+all return `404` — a caller cannot tell them apart.
 
 ### `PATCH /api/courses/{id}`
 
@@ -111,8 +112,7 @@ All errors use the standard `application/problem+json` shape.
 | --- | --- |
 | `400 Bad Request` | Missing/invalid body, or a URL that is not a YouTube playlist URL |
 | `401 Unauthorized` | Missing or wrong credentials |
-| `403 Forbidden` | The Course belongs to another owner |
-| `404 Not Found` | The Course does not exist or is soft-deleted |
+| `404 Not Found` | The Course does not exist, is soft-deleted, or belongs to another owner |
 | `409 Conflict` | The playlist is already one of the user's active Courses |
 | `422 Unprocessable Content` | YouTube reports the playlist as nonexistent, private, or unavailable |
 | `503 Service Unavailable` | YouTube Data API quota exhausted or a transient outage — retriable |

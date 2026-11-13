@@ -16,13 +16,17 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionTemplate;
 
 /**
  * Owns the global Playlist snapshot lifecycle: reuse a fresh snapshot without touching the API, refresh
  * a stale one, and fold resolved videos into the stored lessons. Re-syncs never delete a Lesson — a
  * video that disappears is marked unavailable so its row (and any progress keyed to it) survives
  * (ADR-0005, ADR-0004, ADR-0009).
+ *
+ * <p>The YouTube call is made deliberately <em>outside</em> any database transaction: a slow or
+ * timing-out API must not hold a pooled connection while it blocks. Once the response is in hand the
+ * database work runs inside a short {@link TransactionTemplate} block.
  */
 @Component
 @RequiredArgsConstructor
@@ -31,27 +35,36 @@ class PlaylistSnapshotService {
     private final PlaylistRepository playlistRepository;
     private final YouTubeClient youTubeClient;
     private final CatalogProperties catalogProperties;
+    private final TransactionTemplate transactionTemplate;
 
     /** Returns a fresh snapshot, resolving it through the API only when absent or stale. */
-    @Transactional
-    public PlaylistEntity getOrCreateFresh(String youtubePlaylistId) {
-        PlaylistEntity playlist =
+    PlaylistEntity getOrCreateFresh(String youtubePlaylistId) {
+        PlaylistEntity existing =
                 playlistRepository.findByYoutubePlaylistId(youtubePlaylistId).orElse(null);
-        if (playlist != null && isFresh(playlist)) {
-            return playlist;
+        if (existing != null && isFresh(existing)) {
+            return existing;
         }
         ResolvedPlaylist resolved = youTubeClient.resolvePlaylist(youtubePlaylistId);
-        if (playlist == null) {
-            playlist = new PlaylistEntity(youtubePlaylistId, resolved.title());
-        }
-        apply(playlist, resolved);
-        return playlistRepository.save(playlist);
+        return transactionTemplate.execute(status -> persist(youtubePlaylistId, resolved));
     }
 
     /** Refreshes a snapshot in place, preserving existing lessons and their progress. */
-    @Transactional
-    public PlaylistEntity refresh(PlaylistEntity playlist) {
-        ResolvedPlaylist resolved = youTubeClient.resolvePlaylist(playlist.getYoutubePlaylistId());
+    PlaylistEntity refresh(String youtubePlaylistId) {
+        ResolvedPlaylist resolved = youTubeClient.resolvePlaylist(youtubePlaylistId);
+        return transactionTemplate.execute(status -> {
+            PlaylistEntity playlist = playlistRepository
+                    .findByYoutubePlaylistId(youtubePlaylistId)
+                    .orElseThrow(() ->
+                            new IllegalStateException("Playlist snapshot missing: " + youtubePlaylistId));
+            apply(playlist, resolved);
+            return playlistRepository.save(playlist);
+        });
+    }
+
+    private PlaylistEntity persist(String youtubePlaylistId, ResolvedPlaylist resolved) {
+        PlaylistEntity playlist = playlistRepository
+                .findByYoutubePlaylistId(youtubePlaylistId)
+                .orElseGet(() -> new PlaylistEntity(youtubePlaylistId, resolved.title()));
         apply(playlist, resolved);
         return playlistRepository.save(playlist);
     }

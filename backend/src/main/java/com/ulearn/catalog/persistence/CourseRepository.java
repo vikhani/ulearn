@@ -11,7 +11,7 @@ public interface CourseRepository extends JpaRepository<CourseEntity, UUID> {
 
     List<CourseEntity> findByOwnerIdAndDeletedAtIsNullOrderByCreatedAtDesc(UUID ownerId);
 
-    Optional<CourseEntity> findByIdAndDeletedAtIsNull(UUID id);
+    Optional<CourseEntity> findByIdAndOwnerIdAndDeletedAtIsNull(UUID id, UUID ownerId);
 
     boolean existsByOwnerIdAndPlaylistIdAndDeletedAtIsNull(UUID ownerId, UUID playlistId);
 }

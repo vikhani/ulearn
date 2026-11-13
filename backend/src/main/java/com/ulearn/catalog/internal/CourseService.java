@@ -1,7 +1,6 @@
 package com.ulearn.catalog.internal;
 
 import com.ulearn.accounts.api.CurrentUserProvider;
-import com.ulearn.accounts.api.OwnershipGuard;
 import com.ulearn.catalog.api.CourseCatalog;
 import com.ulearn.catalog.api.CourseNotFoundException;
 import com.ulearn.catalog.api.CourseView;
@@ -18,7 +17,14 @@ import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionTemplate;
 
+/**
+ * Implements the Course lifecycle for the authenticated owner. Reads and writes are scoped by the
+ * owner's id in the query itself, so another identity's Course is indistinguishable from a missing one.
+ * Operations that touch the YouTube API ({@link #addCourse}, {@link #resyncCourse}) resolve the network
+ * call <em>before</em> opening a transaction, so a slow API never holds a database connection.
+ */
 @Service
 @RequiredArgsConstructor
 class CourseService implements CourseCatalog {
@@ -27,19 +33,24 @@ class CourseService implements CourseCatalog {
     private final PlaylistRepository playlistRepository;
     private final PlaylistSnapshotService playlistSnapshotService;
     private final CurrentUserProvider currentUserProvider;
-    private final OwnershipGuard ownershipGuard;
+    private final TransactionTemplate transactionTemplate;
 
     @Override
-    @Transactional
     public CourseView addCourse(String sourceUrl) {
         UUID ownerId = currentUserProvider.currentUser().id();
         String youtubePlaylistId = PlaylistUrl.extractPlaylistId(sourceUrl);
         rejectDuplicate(ownerId, youtubePlaylistId);
 
-        PlaylistEntity playlist = playlistSnapshotService.getOrCreateFresh(youtubePlaylistId);
-        CourseEntity course = courseRepository.save(
-                new CourseEntity(ownerId, playlist, playlist.getTitle(), sourceUrl));
-        return toView(course, true);
+        // Resolve the playlist (possibly over the network) before opening a transaction.
+        UUID playlistId =
+                playlistSnapshotService.getOrCreateFresh(youtubePlaylistId).getId();
+
+        return transactionTemplate.execute(status -> {
+            PlaylistEntity playlist = playlistRepository.getReferenceById(playlistId);
+            CourseEntity course = courseRepository.save(
+                    new CourseEntity(ownerId, playlist, playlist.getTitle(), sourceUrl));
+            return toView(course, true);
+        });
     }
 
     @Override
@@ -74,11 +85,15 @@ class CourseService implements CourseCatalog {
     }
 
     @Override
-    @Transactional
     public CourseView resyncCourse(UUID courseId) {
-        CourseEntity course = loadOwnedActiveCourse(courseId);
-        playlistSnapshotService.refresh(course.getPlaylist());
-        return toView(course, true);
+        UUID ownerId = currentUserProvider.currentUser().id();
+        String youtubePlaylistId = transactionTemplate.execute(
+                status -> loadOwnedActiveCourse(courseId, ownerId).getPlaylist().getYoutubePlaylistId());
+
+        // Refresh the snapshot (network) outside any transaction, then rebuild the view.
+        playlistSnapshotService.refresh(youtubePlaylistId);
+
+        return transactionTemplate.execute(status -> toView(loadOwnedActiveCourse(courseId, ownerId), true));
     }
 
     private void rejectDuplicate(UUID ownerId, String youtubePlaylistId) {
@@ -91,11 +106,13 @@ class CourseService implements CourseCatalog {
     }
 
     private CourseEntity loadOwnedActiveCourse(UUID courseId) {
-        CourseEntity course = courseRepository
-                .findByIdAndDeletedAtIsNull(courseId)
+        return loadOwnedActiveCourse(courseId, currentUserProvider.currentUser().id());
+    }
+
+    private CourseEntity loadOwnedActiveCourse(UUID courseId, UUID ownerId) {
+        return courseRepository
+                .findByIdAndOwnerIdAndDeletedAtIsNull(courseId, ownerId)
                 .orElseThrow(() -> new CourseNotFoundException("Course not found"));
-        ownershipGuard.requireOwner(course.getOwnerId());
-        return course;
     }
 
     private static CourseView toView(CourseEntity course, boolean includeLessons) {
