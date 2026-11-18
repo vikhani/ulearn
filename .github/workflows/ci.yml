@@ -27,21 +27,21 @@ jobs:
         run: ./gradlew --no-daemon pitest
       - name: Upload backend coverage
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: backend-coverage
           path: backend/build/reports/jacoco/test/html
           if-no-files-found: ignore
       - name: Upload backend mutation report
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: backend-mutation-report
           path: backend/build/reports/pitest
           if-no-files-found: ignore
       - name: Upload backend Checkstyle report
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: backend-checkstyle
           path: backend/build/reports/checkstyle
@@ -67,7 +67,7 @@ jobs:
         run: npm test
       - name: Upload frontend coverage
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: frontend-coverage
           path: frontend/coverage
